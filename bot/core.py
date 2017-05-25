@@ -13,7 +13,6 @@ slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 
 def handle_command(command: str, channel: str, username: str):
-
     if command.startswith(OW_COMMAND):
         key = command.lstrip(OW_COMMAND + " ")
         if key == OW_STATS_KEY:
