@@ -21,8 +21,10 @@ class OWStats:
         ).json()
 
     def send_overall_stats(self, sl_client: SlackClient, channel: str):
-
-        battletag = USER_MAPPING[self.username]
+        try:
+            battletag = USER_MAPPING[self.username]
+        except KeyError:
+            return 
         response = self.make_owapi_request(
             battletag,
             'stats'
