@@ -1,13 +1,14 @@
 import requests
 
 from settings import USER_MAPPING
-from slackclient import SlackClient
 
 from .messages import OWOverwallMessage
 
 
 class OWStats:
-    def __init__(self, username: str):
+    def __init__(self, client, channel, username: str):
+        self._slack_client = client
+        self._channel = channel
         self._username = username
 
     def make_owapi_request(self, tag: str, endp: str):
@@ -20,7 +21,7 @@ class OWStats:
             headers=headers
         ).json()
 
-    def send_overall_stats(self, sl_client: SlackClient, channel: str):
+    def send_overall_stats(self):
         try:
             battletag = USER_MAPPING[self.username]
         except KeyError:
@@ -32,9 +33,9 @@ class OWStats:
         overall_stats = response['eu']['stats']['competitive']['overall_stats']
         ow_message = OWOverwallMessage(battletag, overall_stats)
         message = ow_message.make_me_pretty()
-        sl_client.api_call(
+        self.slack_client.api_call(
             "chat.postMessage",
-            channel=channel,
+            channel=self.channel,
             text=message,
             as_user=True
         )
@@ -42,3 +43,11 @@ class OWStats:
     @property
     def username(self):
         return self._username
+
+    @property
+    def channel(self):
+        return self._channel
+
+    @property
+    def slack_client(self):
+        return self._slack_client

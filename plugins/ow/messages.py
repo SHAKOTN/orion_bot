@@ -1,8 +1,8 @@
-ROW_MSG = """
+ROW_MSG_OVERALL_STATS = """
     `[{battletag}]`
         *Your rating is - {comprank}*
         *Your level is - {level}*
-        *Competitive games count - {games}*
+        *Games count - {games}*
         *Your tier is - {tier}*
         *Your win rate is {win_rate}%*
         *Wins - {wins}*
@@ -17,7 +17,7 @@ class OWOverwallMessage:
 
     def make_me_pretty(self):
         return (
-            ROW_MSG.format(
+            ROW_MSG_OVERALL_STATS.format(
                 battletag=self.battletag,
                 comprank=self.row_data["comprank"],
                 level=str(

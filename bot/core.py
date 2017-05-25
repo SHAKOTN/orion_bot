@@ -17,11 +17,12 @@ def handle_command(command: str, channel: str, username: str):
     if command.startswith(OW_COMMAND):
         key = command.lstrip(OW_COMMAND + " ")
         if key == OW_STATS_KEY:
-            ow_stat = OWStats(username=username)
-            ow_stat.send_overall_stats(
-                slack_client,
-                channel
+            ow_stat = OWStats(
+                username=username,
+                client=slack_client,
+                channel=channel
             )
+            ow_stat.send_overall_stats()
     else:
         slack_client.api_call(
             "chat.postMessage",
