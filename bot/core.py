@@ -1,7 +1,7 @@
 import os
 import time
 
-from settings import OW_COMMAND
+from settings import OW_COMMAND, OW_STATS_KEY
 from slackclient import SlackClient
 from plugins import OWStats
 
@@ -12,20 +12,21 @@ AT_BOT = "<@" + BOT_ID + ">"
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 
-def handle_command(command, channel, username):
+def handle_command(command: str, channel: str, username: str):
 
-    response = "`Didn't get it...`"
     if command.startswith(OW_COMMAND):
-        ow_stat = OWStats(username=username)
-        ow_stat.send_overall_stats(
-            slack_client,
-            channel
-        )
+        key = command.lstrip(OW_COMMAND + " ")
+        if key == OW_STATS_KEY:
+            ow_stat = OWStats(username=username)
+            ow_stat.send_overall_stats(
+                slack_client,
+                channel
+            )
     else:
         slack_client.api_call(
             "chat.postMessage",
             channel=channel,
-            text=response,
+            text="`Didn't get it...`",
             as_user=True
         )
 
