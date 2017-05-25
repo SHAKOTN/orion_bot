@@ -1,0 +1,14 @@
+.DS_Store
+.penv
+.idea
+.settings
+.cache
+__pycache__
+dump.rdb
+*.egg
+*.egg-info
+build/
+dist/
+*.log*
+/version.txt
+/version_public.txt
