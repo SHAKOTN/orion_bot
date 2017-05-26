@@ -8,12 +8,31 @@ ROW_MSG_OVERALL_STATS = """
         *Wins - {wins}*
         *Losses - {losses}*"""
 
+ROW_MSG_HERO_STATS = """
+    `[{battletag} {hero}]`
+        *Damage done average - {dmg_avg}* 
+        *Eliminations average - {elim_avg}* 
+        *Objective kills average - {obj_kills_avg}* 
+        *Solo kills average - {solo_kills_avg}* 
+        *Death average - {death_avg}* 
+"""
 
-class OWOverwallMessage:
+
+class OWMessage:
 
     def __init__(self, battletag: str, row_data: dict):
         self.row_data = row_data
         self._battletag = battletag
+
+    def make_me_pretty(self):
+        pass
+
+    @property
+    def battletag(self):
+        return self._battletag
+
+
+class OWOverwallMessage(OWMessage):
 
     def make_me_pretty(self):
         return (
@@ -31,6 +50,27 @@ class OWOverwallMessage:
             )
         ).lstrip()
 
-    @property
-    def battletag(self):
-        return self._battletag
+
+class OWHeroStatMessage(OWMessage):
+
+    def __init__(
+            self,
+            battletag,
+            row_data,
+            hero
+    ):
+        super().__init__(battletag, row_data)
+        self.hero = hero
+
+    def make_me_pretty(self):
+        return(
+            ROW_MSG_HERO_STATS.format(
+                battletag=self.battletag,
+                hero=self.hero,
+                dmg_avg=self.row_data.get("damage_done_average", ""),
+                elim_avg=self.row_data.get("eliminations_average", ""),
+                obj_kills_avg=self.row_data.get("objective_kills_average", ""),
+                solo_kills_avg=self.row_data.get("solo_kills_average", ""),
+                death_avg=self.row_data.get("deaths_average", "")
+            )
+        )

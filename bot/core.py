@@ -1,44 +1,51 @@
-import os
+import logging
 import time
 
+from bot.slack import slack_backend
 from bot.utils import parse_slack_output
-from plugins import OWStats
-from settings import OW_COMMAND, OW_STATS_KEY
-from slackclient import SlackClient
+from plugins import OWBackend
+from settings import OW_COMMAND, OW_HEROES_KEY, OW_STATS_KEY
 
-BOT_ID = os.environ.get("BOT_ID")
-
-AT_BOT = "<@" + BOT_ID + ">"
-
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def handle_command(command: str, channel: str, username: str):
     if command.startswith(OW_COMMAND):
+
         key = command.lstrip(OW_COMMAND + " ")
-        if key == OW_STATS_KEY:
-            ow_stat = OWStats(
-                username=username,
-                client=slack_client,
-                channel=channel
-            )
+
+        ow_stat = OWBackend(
+            username=username,
+            client=slack_backend,
+            channel=channel
+        )
+
+        if key.startswith(OW_STATS_KEY):
             ow_stat.send_overall_stats()
+
+        elif key.startswith(OW_HEROES_KEY):
+            hero = key.lstrip(OW_HEROES_KEY)
+            ow_stat.send_hero_stats(hero.lstrip())
     else:
-        slack_client.api_call(
-            "chat.postMessage",
+        slack_backend.send_message(
             channel=channel,
             text="`Didn't get it...`",
-            as_user=True
         )
 
 if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1
-    if slack_client.rtm_connect():
-        print("StarterBot connected and running!")
+    if slack_backend.rtm_connect():
+
+        logger.info("StarterBot connected and running!")
+
         while True:
-            cmd, chat, user = parse_slack_output(slack_client.rtm_read())
+            cmd, chat, user = parse_slack_output(
+                slack_backend,
+                slack_backend.rtm_read()
+            )
             if cmd and chat:
                 handle_command(cmd, chat, user)
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
-        print("Connection failed. Invalid Slack token or bot ID?")
+        logger.info("Connection failed. Invalid Slack token or bot ID?")

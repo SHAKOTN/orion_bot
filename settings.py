@@ -1,5 +1,15 @@
+import os
+
+# OVERWATCH SETTINGS
 OW_COMMAND = "ow"
+
 OW_STATS_KEY = "stats"
+
+OW_HEROES_KEY = "hero"
+
+BASE_OWAPI_URL = "https://owapi.net/api/v3/u/{battletag}/stats"
+
+AT_BOT = "<@" + os.environ.get("BOT_ID") + ">"
 
 # TODO: Move to redis/cache - create init function
 USER_MAPPING = {
@@ -8,4 +18,29 @@ USER_MAPPING = {
     "hunson.abadeer": "InSoulEmpty-2817",
 }
 
-BASE_OWAPI_URL = "https://owapi.net/api/v3/u/{battletag}/stats"
+OW_HEROES_LIST = [
+    'reinhardt',
+    'tracer',
+    'zenyatta',
+    'junkrat',
+    'orisa',
+    'winston',
+    # 'mccree',
+    'hanzo',
+    'pharah',
+    'roadhog',
+    'zarya',
+    'torbjorn',
+    'mercy',
+    'mei',
+    'ana',
+    'widowmaker',
+    'genji',
+    'reaper',
+    'soldier76',
+    'bastion',
+    'symmetra',
+    'dva',
+    # 'sombra',
+    'lucio'
+]

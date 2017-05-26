@@ -1,5 +1,5 @@
-from plugins.ow.ow import OWStats
+from plugins.ow.ow import OWBackend
 
 __all__ = [
-    'OWStats'
+    'OWBackend'
 ]

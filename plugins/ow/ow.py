@@ -1,15 +1,24 @@
+import logging
+
 import requests
 
-from settings import USER_MAPPING
+from settings import USER_MAPPING, OW_HEROES_LIST
 
-from .messages import OWOverwallMessage
+from .messages import OWOverwallMessage, OWHeroStatMessage
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-class OWStats:
+class OWBackend:
     def __init__(self, client, channel, username: str):
         self._slack_client = client
         self._channel = channel
         self._username = username
+
+        self._battletag = USER_MAPPING.get(
+            self.username
+        )
 
     def make_owapi_request(self, tag: str, endp: str):
         headers = {'User-Agent': 'SlackBot'}
@@ -22,22 +31,68 @@ class OWStats:
         ).json()
 
     def send_overall_stats(self):
-        try:
-            battletag = USER_MAPPING[self.username]
-        except KeyError:
-            return 
+
+        if not self.battletag:
+            return
+
         response = self.make_owapi_request(
-            battletag,
+            self.battletag,
             'stats'
         )
-        overall_stats = response['eu']['stats']['competitive']['overall_stats']
-        ow_message = OWOverwallMessage(battletag, overall_stats)
-        message = ow_message.make_me_pretty()
-        self.slack_client.api_call(
-            "chat.postMessage",
+        overall_stats = (
+            response['eu']
+            ['stats']
+            ['competitive']
+            ['overall_stats']
+        )
+
+        ow_message = OWOverwallMessage(
+            self.battletag,
+            overall_stats
+        )
+
+        self.slack_client.send_message(
             channel=self.channel,
-            text=message,
-            as_user=True
+            text=ow_message.make_me_pretty()
+        )
+
+    def send_hero_stats(self, hero):
+
+        if not self.battletag:
+            return
+
+        # If user made a typo in Hero name
+        if hero not in OW_HEROES_LIST:
+            self.slack_client.send_message(
+                channel=self.channel,
+                text="`{}` - is incorrect hero name. Use one of these: `{}`".format(
+                    hero,
+                    OW_HEROES_LIST
+                )
+            )
+            return
+
+        response = self.make_owapi_request(
+            self.battletag,
+            'heroes'
+        )
+
+        hero_stats = (
+            response['eu']
+            ['heroes']
+            ['stats']
+            ['competitive']
+            [hero]
+            ['average_stats']
+        )
+        ow_message = OWHeroStatMessage(
+            self.battletag,
+            hero_stats,
+            hero
+        )
+        self.slack_client.send_message(
+            channel=self.channel,
+            text=ow_message.make_me_pretty()
         )
 
     @property
@@ -51,3 +106,7 @@ class OWStats:
     @property
     def slack_client(self):
         return self._slack_client
+
+    @property
+    def battletag(self):
+        return self._battletag
