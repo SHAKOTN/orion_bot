@@ -98,7 +98,13 @@ class OWBackend:
             hero_stats = average_stats
 
             hero_stats["weapon_accuracy"] = (
-                general_stats["weapon_accuracy"] * 100  # %
+                float(
+                    # Reinhardt doesn't have any weapon accuracy
+                    general_stats.get(
+                        "weapon_accuracy",
+                        0
+                    )
+                ) * 100  # %
             )
 
             ow_message = OWHeroStatMessage(
