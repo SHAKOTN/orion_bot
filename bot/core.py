@@ -1,9 +1,10 @@
 import os
 import time
 
+from bot.utils import parse_slack_output
+from plugins import OWStats
 from settings import OW_COMMAND, OW_STATS_KEY
 from slackclient import SlackClient
-from plugins import OWStats
 
 BOT_ID = os.environ.get("BOT_ID")
 
@@ -30,28 +31,6 @@ def handle_command(command: str, channel: str, username: str):
             as_user=True
         )
 
-
-def parse_slack_output(slack_rtm_output):
-
-    output_list = slack_rtm_output
-    if output_list and len(output_list) > 0:
-
-        for output in output_list:
-            if output and 'text' in output and AT_BOT in output['text']:
-                user_id = output["user"]
-                user = slack_client.api_call(
-                    'users.info',
-                    user=user_id
-                )
-                username = user['user']['name']
-                return (
-                    output['text'].split(AT_BOT)[1].strip().lower(),
-                    output['channel'],
-                    username
-                )
-    return None, None, None
-
-
 if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1
     if slack_client.rtm_connect():
@@ -63,4 +42,3 @@ if __name__ == "__main__":
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
-
