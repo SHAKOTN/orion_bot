@@ -20,7 +20,7 @@ class OWBackend:
             self.username
         )
 
-    def make_owapi_request(self, tag: str, endp: str):
+    def _make_owapi_request(self, tag: str, endp: str):
         headers = {'User-Agent': 'SlackBot'}
         return requests.get(
             'https://owapi.net/api/v3/u/{battletag}/{endpoint}'.format(
@@ -35,7 +35,7 @@ class OWBackend:
         if not self.battletag:
             return
 
-        response = self.make_owapi_request(
+        response = self._make_owapi_request(
             self.battletag,
             'stats'
         )
@@ -72,7 +72,7 @@ class OWBackend:
             )
             return
 
-        response = self.make_owapi_request(
+        response = self._make_owapi_request(
             self.battletag,
             'heroes'
         )
