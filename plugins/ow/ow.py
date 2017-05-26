@@ -79,7 +79,7 @@ class OWBackend:
 
         # If u played 0 hours on a hero - API returns no info about it
         try:
-            hero_stats = (
+            average_stats = (
                 response['eu']
                 ['heroes']
                 ['stats']
@@ -87,6 +87,20 @@ class OWBackend:
                 [hero]
                 ['average_stats']
             )
+            general_stats = (
+                response['eu']
+                ['heroes']
+                ['stats']
+                ['competitive']
+                [hero]
+                ['general_stats']
+            )
+            hero_stats = average_stats
+
+            hero_stats["weapon_accuracy"] = (
+                general_stats["weapon_accuracy"] * 100  # %
+            )
+
             ow_message = OWHeroStatMessage(
                 self.battletag,
                 hero_stats,

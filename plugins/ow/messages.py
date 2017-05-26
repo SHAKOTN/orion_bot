@@ -15,6 +15,7 @@ ROW_MSG_HERO_STATS = """
         *Objective kills average - {obj_kills_avg}* 
         *Solo kills average - {solo_kills_avg}* 
         *Death average - {death_avg}* 
+        *Weapon Accuracy - {wpn_acc}* %
 """
 
 
@@ -71,6 +72,7 @@ class OWHeroStatMessage(OWMessage):
                 elim_avg=self.row_data.get("eliminations_average", ""),
                 obj_kills_avg=self.row_data.get("objective_kills_average", ""),
                 solo_kills_avg=self.row_data.get("solo_kills_average", ""),
-                death_avg=self.row_data.get("deaths_average", "")
+                death_avg=self.row_data.get("deaths_average", ""),
+                wpn_acc=self.row_data.get("weapon_accuracy", "")
             )
         )
