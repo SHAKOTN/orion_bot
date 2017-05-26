@@ -106,7 +106,7 @@ class OWBackend:
             )
             self.slack_client.send_message(
                 channel=self.channel,
-                text=ow_message.stat_message
+                text=ow_message.make_me_pretty()
             )
         except KeyError:
             self.slack_client.send_message(

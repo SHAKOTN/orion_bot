@@ -58,20 +58,21 @@ class OWHeroStatMessage(OWMessage):
 
         self.hero = hero
 
+    def make_me_pretty(self):
         if OW_HEROES_MAPPING[self.hero] == OW_DPS:
-            self.stat_message = dps_stats(
+            return dps_stats(
                 self.battletag,
                 self.hero,
                 self.row_data
             )
         elif OW_HEROES_MAPPING[self.hero] == OW_TANK:
-            self.stat_message = tank_stats(
+            return tank_stats(
                 self.battletag,
                 self.hero,
                 self.row_data
             )
         elif OW_HEROES_MAPPING[self.hero] == OW_SUPPORT:
-            self.stat_message = support_stats(
+            return support_stats(
                 self.battletag,
                 self.hero,
                 self.row_data

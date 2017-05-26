@@ -1,4 +1,5 @@
-#TODO: Tons of copypasta here. Remove in the nearest future
+# TODO: Tons of copypasta here. Remove in the nearest future
+
 
 def dps_stats(battletag, hero, dps_mapping):
     return """
