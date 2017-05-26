@@ -1,3 +1,7 @@
+from plugins.ow.mappings import dps_stats, support_stats, tank_stats
+from settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
+
+
 ROW_MSG_OVERALL_STATS = """
     `[{battletag}]`
         *Your rating is - {comprank}*
@@ -7,16 +11,6 @@ ROW_MSG_OVERALL_STATS = """
         *Your win rate is {win_rate}%*
         *Wins - {wins}*
         *Losses - {losses}*"""
-
-ROW_MSG_HERO_STATS = """
-    `[{battletag} {hero}]`
-        *Damage done average - {dmg_avg}* 
-        *Eliminations average - {elim_avg}* 
-        *Objective kills average - {obj_kills_avg}* 
-        *Solo kills average - {solo_kills_avg}* 
-        *Death average - {death_avg}* 
-        *Weapon Accuracy - {wpn_acc}* %
-"""
 
 
 class OWMessage:
@@ -61,18 +55,24 @@ class OWHeroStatMessage(OWMessage):
             hero
     ):
         super().__init__(battletag, row_data)
+
         self.hero = hero
 
-    def make_me_pretty(self):
-        return(
-            ROW_MSG_HERO_STATS.format(
-                battletag=self.battletag,
-                hero=self.hero,
-                dmg_avg=self.row_data.get("damage_done_average", ""),
-                elim_avg=self.row_data.get("eliminations_average", ""),
-                obj_kills_avg=self.row_data.get("objective_kills_average", ""),
-                solo_kills_avg=self.row_data.get("solo_kills_average", ""),
-                death_avg=self.row_data.get("deaths_average", ""),
-                wpn_acc=self.row_data.get("weapon_accuracy", "")
+        if OW_HEROES_MAPPING[self.hero] == OW_DPS:
+            self.stat_message = dps_stats(
+                self.battletag,
+                self.hero,
+                self.row_data
             )
-        )
+        elif OW_HEROES_MAPPING[self.hero] == OW_TANK:
+            self.stat_message = tank_stats(
+                self.battletag,
+                self.hero,
+                self.row_data
+            )
+        elif OW_HEROES_MAPPING[self.hero] == OW_SUPPORT:
+            self.stat_message = support_stats(
+                self.battletag,
+                self.hero,
+                self.row_data
+            )

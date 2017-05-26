@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from settings import USER_MAPPING, OW_HEROES_LIST
+from settings import USER_MAPPING, OW_HEROES_MAPPING
 
 from .messages import OWOverwallMessage, OWHeroStatMessage
 
@@ -57,12 +57,12 @@ class OWBackend:
             return
 
         # If user made a typo in Hero name
-        if hero not in OW_HEROES_LIST:
+        if hero not in list(OW_HEROES_MAPPING.keys()):
             self.slack_client.send_message(
                 channel=self.channel,
                 text="`{}` - is incorrect hero name. Use one of these: `{}`".format(
                     hero,
-                    OW_HEROES_LIST
+                    list(OW_HEROES_MAPPING.keys())
                 )
             )
             return
@@ -88,16 +88,16 @@ class OWBackend:
                 [hero]
                 ['general_stats']
             )
-            hero_stats = average_stats
-            hero_stats["weapon_accuracy"] = (
-                float(
-                    # Reinhardt doesn't have any weapon accuracy
-                    general_stats.get(
-                        "weapon_accuracy",
-                        0
-                    )
-                ) * 100  # %
-            )
+            # char_stats = general_stats = (
+            #     response['eu']
+            #     ['heroes']
+            #     ['stats']
+            #     ['competitive']
+            #     [hero]
+            #     ['hero_stats']
+            # )
+
+            hero_stats = {**average_stats, **general_stats}
 
             ow_message = OWHeroStatMessage(
                 self.battletag,
@@ -106,7 +106,7 @@ class OWBackend:
             )
             self.slack_client.send_message(
                 channel=self.channel,
-                text=ow_message.make_me_pretty()
+                text=ow_message.stat_message
             )
         except KeyError:
             self.slack_client.send_message(

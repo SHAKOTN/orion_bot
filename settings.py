@@ -16,29 +16,33 @@ USER_MAPPING = {
     "hunson.abadeer": "InSoulEmpty-2817",
 }
 
-OW_HEROES_LIST = [
-    'reinhardt',
-    'tracer',
-    'zenyatta',
-    'junkrat',
-    'orisa',
-    'winston',
-    'mccree',
-    'hanzo',
-    'pharah',
-    'roadhog',
-    'zarya',
-    'torbjorn',
-    'mercy',
-    'mei',
-    'ana',
-    'widowmaker',
-    'genji',
-    'reaper',
-    'soldier76',
-    'bastion',
-    'symmetra',
-    'dva',
-    'sombra',
-    'lucio'
-]
+OW_TANK = 'tank'
+OW_DPS = 'dps'
+OW_SUPPORT = 'support'
+
+OW_HEROES_MAPPING = {
+    'reinhardt': 'tank',
+    'tracer': 'dps',
+    'zenyatta': 'support',
+    'junkrat': 'dps',
+    'orisa': 'tank',
+    'winston': 'tank',
+    'mccree': 'dps',
+    'hanzo': 'dps',
+    'pharah': 'dps',
+    'roadhog': 'dps',
+    'zarya': 'tank',
+    'torbjorn': 'dps',
+    'mercy': 'support',
+    'mei': 'dps',
+    'ana': 'support',
+    'widowmaker': 'dps',
+    'genji': 'dps',
+    'reaper': 'dps',
+    'soldier76': 'dps',
+    'bastion': 'dps',
+    'symmetra': 'dps',
+    'dva': 'tank',
+    'sombra': 'dps',
+    'lucio': 'support'
+}
