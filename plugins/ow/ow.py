@@ -15,7 +15,6 @@ class OWBackend:
         self._slack_client = client
         self._channel = channel
         self._username = username
-
         self._battletag = USER_MAPPING.get(
             self.username
         )
@@ -31,7 +30,6 @@ class OWBackend:
         ).json()
 
     def send_overall_stats(self):
-
         if not self.battletag:
             return
 
@@ -45,19 +43,16 @@ class OWBackend:
             ['competitive']
             ['overall_stats']
         )
-
         ow_message = OWOverwallMessage(
             self.battletag,
             overall_stats
         )
-
         self.slack_client.send_message(
             channel=self.channel,
             text=ow_message.make_me_pretty()
         )
 
     def send_hero_stats(self, hero):
-
         if not self.battletag:
             return
 
@@ -71,12 +66,10 @@ class OWBackend:
                 )
             )
             return
-
         response = self._make_owapi_request(
             self.battletag,
             'heroes'
         )
-
         # If u played 0 hours on a hero - API returns no info about it
         try:
             average_stats = (
@@ -96,7 +89,6 @@ class OWBackend:
                 ['general_stats']
             )
             hero_stats = average_stats
-
             hero_stats["weapon_accuracy"] = (
                 float(
                     # Reinhardt doesn't have any weapon accuracy
