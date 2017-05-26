@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 
@@ -9,6 +10,7 @@ from .messages import OWOverwallMessage, OWHeroStatMessage
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+REGION = os.environ.get('REGION')
 
 class OWBackend:
     def __init__(self, client, channel, username: str):
@@ -38,7 +40,7 @@ class OWBackend:
             'stats'
         )
         overall_stats = (
-            response['eu']
+            response[REGION]
             ['stats']
             ['competitive']
             ['overall_stats']
@@ -73,7 +75,7 @@ class OWBackend:
         # If u played 0 hours on a hero - API returns no info about it
         try:
             average_stats = (
-                response['eu']
+                response[REGION]
                 ['heroes']
                 ['stats']
                 ['competitive']
@@ -81,7 +83,7 @@ class OWBackend:
                 ['average_stats']
             )
             general_stats = (
-                response['eu']
+                response[REGION]
                 ['heroes']
                 ['stats']
                 ['competitive']
@@ -89,7 +91,7 @@ class OWBackend:
                 ['general_stats']
             )
             # char_stats = general_stats = (
-            #     response['eu']
+            #     response[REGION]
             #     ['heroes']
             #     ['stats']
             #     ['competitive']
