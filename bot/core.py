@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def handle_command(command: str, channel: str, username: str):
     if command.startswith(OW_COMMAND):
 
-        key = command.lstrip(OW_COMMAND + " ")
+        argument = command.lstrip(OW_COMMAND + " ")
 
         ow_stat = OWBackend(
             username=username,
@@ -21,16 +21,16 @@ def handle_command(command: str, channel: str, username: str):
             channel=channel
         )
 
-        if key.startswith(OW_STATS_KEY):
+        if argument.startswith(OW_STATS_KEY):
             ow_stat.send_overall_stats()
 
-        elif key.startswith(OW_HEROES_KEY):
-            hero = key.lstrip(OW_HEROES_KEY)
+        elif argument.startswith(OW_HEROES_KEY):
+            hero = argument.lstrip(OW_HEROES_KEY)
             ow_stat.send_hero_stats(hero.lstrip())
     else:
         slack_backend.send_message(
             channel=channel,
-            text="`Didn't get it...`",
+            text="`Could ypu please repeat? I didn't get it!!!`",
         )
 
 if __name__ == "__main__":
