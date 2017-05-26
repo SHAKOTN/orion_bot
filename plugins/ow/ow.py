@@ -78,40 +78,31 @@ class OWBackend:
         )
 
         # If u played 0 hours on a hero - API returns no info about it
-        heroes_list_api = list(
-            (
+        try:
+            hero_stats = (
                 response['eu']
                 ['heroes']
                 ['stats']
                 ['competitive']
-            ).keys()
-        )
-        if hero not in heroes_list_api:
+                [hero]
+                ['average_stats']
+            )
+            ow_message = OWHeroStatMessage(
+                self.battletag,
+                hero_stats,
+                hero
+            )
+            self.slack_client.send_message(
+                channel=self.channel,
+                text=ow_message.make_me_pretty()
+            )
+        except KeyError:
             self.slack_client.send_message(
                 channel=self.channel,
                 text="Sorry, you haven't played on `{}` enough time".format(
                     hero,
                 )
             )
-            return
-
-        hero_stats = (
-            response['eu']
-            ['heroes']
-            ['stats']
-            ['competitive']
-            [hero]
-            ['average_stats']
-        )
-        ow_message = OWHeroStatMessage(
-            self.battletag,
-            hero_stats,
-            hero
-        )
-        self.slack_client.send_message(
-            channel=self.channel,
-            text=ow_message.make_me_pretty()
-        )
 
     @property
     def username(self):
