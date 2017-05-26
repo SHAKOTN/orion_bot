@@ -25,7 +25,7 @@ OW_HEROES_LIST = [
     'junkrat',
     'orisa',
     'winston',
-    # 'mccree',
+    'mccree',
     'hanzo',
     'pharah',
     'roadhog',
@@ -41,6 +41,6 @@ OW_HEROES_LIST = [
     'bastion',
     'symmetra',
     'dva',
-    # 'sombra',
+    'sombra',
     'lucio'
 ]
