@@ -7,8 +7,6 @@ OW_STATS_KEY = "stats"
 
 OW_HEROES_KEY = "hero"
 
-BASE_OWAPI_URL = "https://owapi.net/api/v3/u/{battletag}/stats"
-
 AT_BOT = "<@" + os.environ.get("BOT_ID") + ">"
 
 # TODO: Move to redis/cache - create init function
