@@ -1,20 +1,6 @@
-from plugins.ow.mappings import dps_stats, support_stats, tank_stats
+from plugins.ow.mappings import (dps_stats, overall_stats, support_stats,
+                                 tank_stats)
 from plugins.settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
-
-
-ROW_MSG_OVERALL_STATS = """
-    `[{battletag}]`
-        *Your rating is - {comprank}*
-        *Your level is - {level}*
-        *Games count - {games}*
-        *Your tier is - {tier}*
-        *Your win rate is {win_rate}%*
-        *Wins - {wins}*
-        *Losses - {losses}*
-        *Time played this season - {tm_pld}hrs*
-        *Healing done - {hl_done}*
-        *Damage done - {dmg_done}*
-        """
 
 
 class OWMessage:
@@ -34,23 +20,10 @@ class OWMessage:
 class OWOverwallMessage(OWMessage):
 
     def make_me_pretty(self):
-        return (
-            ROW_MSG_OVERALL_STATS.format(
-                battletag=self.battletag,
-                comprank=self.row_data["comprank"],
-                level=str(
-                    int(self.row_data["level"]) + int(self.row_data["prestige"]) * 100
-                ),
-                games=self.row_data["games"],
-                tier=self.row_data["tier"],
-                win_rate=self.row_data["win_rate"],
-                wins=self.row_data["wins"],
-                losses=self.row_data["losses"],
-                tm_pld=self.row_data.get("time_played", 0),
-                hl_done=self.row_data.get("healing_done", 0),
-                dmg_done=self.row_data.get("damage_done", 0)
-            )
-        ).lstrip()
+        return overall_stats(
+            self.battletag,
+            self.row_data
+        )
 
 
 class OWHeroStatMessage(OWMessage):

@@ -1,6 +1,36 @@
 # TODO: Tons of copypasta here. Remove in the nearest future
 
 
+def overall_stats(battletag, stats):
+    return """
+    `[{battletag}]`
+        *Your rating is - {comprank}*
+        *Your level is - {level}*
+        *Games count - {games}*
+        *Your tier is - {tier}*
+        *Your win rate is {win_rate}%*
+        *Wins - {wins}*
+        *Losses - {losses}*
+        *Time played this season - {tm_pld}hrs*
+        *Healing done - {hl_done}*
+        *Damage done - {dmg_done}*
+        """.format(
+                battletag=battletag,
+                comprank=stats["comprank"],
+                level=str(
+                    int(stats["level"]) + int(stats["prestige"]) * 100
+                ),
+                games=stats["games"],
+                tier=stats["tier"],
+                win_rate=stats["win_rate"],
+                wins=stats["wins"],
+                losses=stats["losses"],
+                tm_pld=stats.get("time_played", 0),
+                hl_done=stats.get("healing_done", 0),
+                dmg_done=stats.get("damage_done", 0)
+    )
+
+
 def dps_stats(battletag, hero, dps_mapping):
     return """
         `[{battletag} {hero}]`
