@@ -36,7 +36,11 @@ class SlackGateway(SlackClient):
         if output_list and len(output_list) > 0:
 
             for output in output_list:
-                if output and 'text' in output and AT_BOT in output['text']:
+                if (
+                    output and 'text' in output
+                        and AT_BOT in output['text']
+                        and self._plugins
+                ):
                     for plugin in self._plugins:
                         plugin.execute_command(output)
         return None, None, None
