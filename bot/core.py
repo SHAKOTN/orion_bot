@@ -1,7 +1,7 @@
 import logging
 import time
 
-from .slack import slack_backend
+from bot.slack import slack_backend
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

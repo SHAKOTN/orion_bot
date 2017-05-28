@@ -1,10 +1,9 @@
 import os
 
-from .utils import import_string
+from bot.utils import import_string
 from plugins.settings import PLUGIN_CLASSES
-from slackclient import SlackClient
-
 from settings import AT_BOT
+from slackclient import SlackClient
 
 
 class SlackGateway(SlackClient):

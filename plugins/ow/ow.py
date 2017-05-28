@@ -3,12 +3,11 @@ import os
 
 import requests
 
+from plugins.ow.messages import OWHeroStatMessage, OWOverwallMessage
 from plugins.plugin_abc import PluginABC
 from plugins.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
                               OW_STATS_KEY, USER_MAPPING, api_url)
 from settings import AT_BOT
-
-from .messages import OWHeroStatMessage, OWOverwallMessage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
