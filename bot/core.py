@@ -1,37 +1,11 @@
 import logging
 import time
 
-from bot.slack import slack_backend
-from bot.utils import parse_slack_output
-from plugins import OWBackend
-from settings import OW_COMMAND, OW_HEROES_KEY, OW_STATS_KEY
+from .slack import slack_backend
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-def handle_command(command: str, channel: str, username: str):
-    if command.startswith(OW_COMMAND):
-
-        argument = command.lstrip(OW_COMMAND + " ")
-
-        ow_stat = OWBackend(
-            username=username,
-            client=slack_backend,
-            channel=channel
-        )
-
-        if argument.startswith(OW_STATS_KEY):
-            ow_stat.send_overall_stats()
-
-        elif argument.startswith(OW_HEROES_KEY):
-            hero = argument.lstrip(OW_HEROES_KEY)
-            ow_stat.send_hero_stats(hero.lstrip())
-    else:
-        slack_backend.send_message(
-            channel=channel,
-            text="`Could ypu please repeat? I didn't get it!!!`",
-        )
 
 if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1
@@ -40,12 +14,7 @@ if __name__ == "__main__":
         logger.info("StarterBot connected and running!")
 
         while True:
-            cmd, chat, user = parse_slack_output(
-                slack_backend,
-                slack_backend.rtm_read()
-            )
-            if cmd and chat:
-                handle_command(cmd, chat, user)
+            cmd, chat, user = slack_backend.parse_slack_output()
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         logger.info("Connection failed. Invalid Slack token or bot ID?")

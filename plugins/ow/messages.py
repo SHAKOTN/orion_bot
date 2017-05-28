@@ -1,5 +1,5 @@
 from plugins.ow.mappings import dps_stats, support_stats, tank_stats
-from settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
+from plugins.settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
 
 
 ROW_MSG_OVERALL_STATS = """

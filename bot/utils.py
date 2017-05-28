@@ -1,28 +1,19 @@
-from settings import AT_BOT
+from importlib import import_module
 
 
-def parse_slack_output(slack_client, slack_rtm_output):
-    text_parser = (
-        lambda out:
-        out['text'].split(AT_BOT)[1].strip().lower()
-    )
+def import_string(dotted_path):
+    try:
+        module_path, class_name = dotted_path.rsplit('.', 1)
+    except ValueError:
+        msg = "{} wrong module path".format(dotted_path)
+        raise ImportError(msg)
 
-    output_list = slack_rtm_output
-    if output_list and len(output_list) > 0:
+    module = import_module(module_path)
 
-        for output in output_list:
-            if output and 'text' in output and AT_BOT in output['text']:
-                user_id = output["user"]
-                username = slack_client.get_user_name(
-                    user_id
-                )
-                return (
-                    text_parser(output),
-                    output['channel'],
-                    username
-                )
-    return None, None, None
-
-
-def command_handler():
-    pass
+    try:
+        return getattr(module, class_name)
+    except AttributeError:
+        msg = 'Module "{}" does not define a "{}" attribute/class'.format(
+            module_path, class_name
+        )
+        raise ImportError(msg)
