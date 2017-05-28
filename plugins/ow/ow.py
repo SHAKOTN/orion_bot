@@ -4,6 +4,7 @@ import os
 import requests
 
 from plugins.ow.messages import OWHeroStatMessage, OWOverwallMessage
+from plugins.ow.storage.redis import redis_storage
 from plugins.plugin_abc import PluginABC
 from plugins.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
                               OW_STATS_KEY, USER_MAPPING, api_url)
@@ -94,6 +95,12 @@ class OWBackend(PluginABC):
             ['game_stats']
         )
         stats = {**overall_stats, **game_stats}
+
+        redis_storage.update_user(
+            battletag,
+            stats
+        )
+
         ow_message = OWOverwallMessage(
             battletag,
             stats
