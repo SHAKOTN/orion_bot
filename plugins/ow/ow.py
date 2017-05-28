@@ -3,7 +3,8 @@ import os
 
 import requests
 
-from plugins.ow.messages import OWHeroStatMessage, OWOverwallMessage
+from plugins.ow.messages import (OWDiffStatsMessage, OWHeroStatMessage,
+                                 OWOverwallMessage)
 from plugins.ow.storage.redis import redis_storage
 from plugins.plugin_abc import PluginABC
 from plugins.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
@@ -75,6 +76,7 @@ class OWBackend(PluginABC):
         ).json()
 
     def send_overall_stats(self, battletag, channel):
+
         if not battletag:
             return
 
@@ -82,23 +84,40 @@ class OWBackend(PluginABC):
             battletag,
             'stats'
         )
-        overall_stats = (
-            response[REGION]
+        stats = {
+            **response[REGION]
             ['stats']
             ['competitive']
-            ['overall_stats']
-        )
-        game_stats = (
-            response[REGION]
+            ['overall_stats'],
+            **response[REGION]
             ['stats']
             ['competitive']
             ['game_stats']
-        )
-        stats = {**overall_stats, **game_stats}
+        }
+
+        curr_cache_stats = {
+            "comprank": stats["comprank"],
+            "level": str(
+                int(stats["level"]) + int(stats["prestige"]) * 100
+            )
+        }
+
+        prev_cache_stats = redis_storage.get_user_stats(battletag)
+        if prev_cache_stats:
+            diff_message = OWDiffStatsMessage(
+                battletag,
+                prev_data=prev_cache_stats,
+                curr_data=curr_cache_stats
+            )
+
+            self.slack_client.send_message(
+                channel=channel,
+                text=diff_message.make_me_pretty()
+            )
 
         redis_storage.update_user(
             battletag,
-            stats
+            curr_cache_stats
         )
 
         ow_message = OWOverwallMessage(

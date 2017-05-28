@@ -31,6 +31,18 @@ def overall_stats(battletag, stats):
     )
 
 
+def diff_stats(battletag, comprank, level):
+    return """
+    `[{battletag}]`
+        *Your rating has changed on {comprank} points*
+        *You increased your level on {level} points*
+    """.format(
+        battletag=battletag,
+        comprank=comprank,
+        level=level
+    )
+
+
 def dps_stats(battletag, hero, dps_mapping):
     return """
         `[{battletag} {hero}]`

@@ -32,9 +32,6 @@ class Storage(abc.ABC):
             battletag,
         )
 
-    def get_user_data(self, key):
-        return self.get(key)
-
     @abc.abstractmethod
     def get(self, key: str) -> dict:
         pass
