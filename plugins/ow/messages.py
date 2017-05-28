@@ -35,7 +35,7 @@ class OWDiffStatsMessage(OWMessage):
 
     def show_stats_diff(self):
         comprank_changed = (
-            int(self.prev_data[b"comprank"]) - int(self.current_data["comprank"])
+            int(self.current_data["comprank"]) - int(self.prev_data[b"comprank"])
         )
 
         level_changed = (
