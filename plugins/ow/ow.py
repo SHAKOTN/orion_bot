@@ -18,7 +18,6 @@ REGION = os.environ.get('REGION')
 class OWBackend(PluginABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._battletag = ""
 
     def execute_command(self, data):
         text_parser = (
@@ -31,16 +30,20 @@ class OWBackend(PluginABC):
         user_name = self.get_user_name(data['user'])
 
         if command.startswith(OW_COMMAND):
-            self._battletag = USER_MAPPING[user_name]
+            battletag = USER_MAPPING[user_name]
 
             argument = command.lstrip(OW_COMMAND + " ")
 
             if argument.startswith(OW_STATS_KEY):
-                self.send_overall_stats(channel)
+                self.send_overall_stats(battletag, channel)
 
             elif argument.startswith(OW_HEROES_KEY):
                 hero = argument.lstrip(OW_HEROES_KEY)
-                self.send_hero_stats(channel, hero.lstrip())
+                self.send_hero_stats(
+                    battletag,
+                    channel,
+                    hero.lstrip()
+                )
         else:
             self.slack_client.send_message(
                 channel=channel,
@@ -70,12 +73,12 @@ class OWBackend(PluginABC):
             headers=headers
         ).json()
 
-    def send_overall_stats(self, channel):
-        if not self.battletag:
+    def send_overall_stats(self, battletag, channel):
+        if not battletag:
             return
 
         response = self._make_owapi_request(
-            self.battletag,
+            battletag,
             'stats'
         )
         overall_stats = (
@@ -92,7 +95,7 @@ class OWBackend(PluginABC):
         )
         stats = {**overall_stats, **game_stats}
         ow_message = OWOverwallMessage(
-            self.battletag,
+            battletag,
             stats
         )
         self.slack_client.send_message(
@@ -100,8 +103,8 @@ class OWBackend(PluginABC):
             text=ow_message.make_me_pretty()
         )
 
-    def send_hero_stats(self, channel, hero):
-        if not self.battletag:
+    def send_hero_stats(self, battletag, channel, hero):
+        if not battletag:
             return
 
         # If user made a typo in Hero name
@@ -115,7 +118,7 @@ class OWBackend(PluginABC):
             )
             return
         response = self._make_owapi_request(
-            self.battletag,
+            battletag,
             'heroes'
         )
         # If u played 0 hours on a hero - API returns no info about it
@@ -148,7 +151,7 @@ class OWBackend(PluginABC):
             hero_stats = {**average_stats, **general_stats}
 
             ow_message = OWHeroStatMessage(
-                self.battletag,
+                battletag,
                 hero_stats,
                 hero
             )
@@ -167,7 +170,3 @@ class OWBackend(PluginABC):
     @property
     def slack_client(self):
         return self._slack_client
-
-    @property
-    def battletag(self):
-        return self._battletag
