@@ -84,9 +84,16 @@ class OWBackend(PluginABC):
             ['competitive']
             ['overall_stats']
         )
+        game_stats = (
+            response[REGION]
+            ['stats']
+            ['competitive']
+            ['game_stats']
+        )
+        stats = {**overall_stats, **game_stats}
         ow_message = OWOverwallMessage(
             self.battletag,
-            overall_stats
+            stats
         )
         self.slack_client.send_message(
             channel=channel,

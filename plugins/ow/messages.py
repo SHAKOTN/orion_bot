@@ -10,7 +10,11 @@ ROW_MSG_OVERALL_STATS = """
         *Your tier is - {tier}*
         *Your win rate is {win_rate}%*
         *Wins - {wins}*
-        *Losses - {losses}*"""
+        *Losses - {losses}*
+        *Time played this season - {tm_pld}hrs*
+        *Healing done - {hl_done}*
+        *Damage done - {dmg_done}*
+        """
 
 
 class OWMessage:
@@ -41,7 +45,10 @@ class OWOverwallMessage(OWMessage):
                 tier=self.row_data["tier"],
                 win_rate=self.row_data["win_rate"],
                 wins=self.row_data["wins"],
-                losses=self.row_data["losses"]
+                losses=self.row_data["losses"],
+                tm_pld=self.row_data.get("time_played", 0),
+                hl_done=self.row_data.get("healing_done", 0),
+                dmg_done=self.row_data.get("damage_done", 0)
             )
         ).lstrip()
 
