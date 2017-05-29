@@ -1,6 +1,6 @@
 from plugins.ow.mappings import (diff_stats, dps_stats, overall_stats,
                                  support_stats, tank_stats)
-from plugins.settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
+from plugins.ow.settings import OW_DPS, OW_HEROES_MAPPING, OW_SUPPORT, OW_TANK
 
 
 class OWMessage:

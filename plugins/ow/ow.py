@@ -5,10 +5,10 @@ import requests
 
 from plugins.ow.messages import (OWDiffStatsMessage, OWHeroStatMessage,
                                  OWOverwallMessage)
+from plugins.ow.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
+                                 OW_STATS_KEY, USER_MAPPING, api_url)
 from plugins.ow.storage.redis import redis_storage
 from plugins.plugin_abc import PluginABC
-from plugins.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
-                              OW_STATS_KEY, USER_MAPPING, api_url)
 from settings import AT_BOT
 
 logging.basicConfig(level=logging.INFO)
