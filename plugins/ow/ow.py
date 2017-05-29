@@ -68,14 +68,16 @@ class OWBackend(PluginABC):
         headers = {
             'User-Agent': 'SlackBot'
         }
-        # TODO: Write a wrapper to handle 400 response instead of handling KeyError below
-        return requests.get(
+        response = requests.get(
             api_url.format(
                 battletag=tag,
                 endpoint=endp
             ),
             headers=headers
-        ).json()
+        )
+        response.raise_for_status()
+
+        return response.json()
 
     def init_user(self, username, battletag):
         redis_storage.set_battletag(username, battletag)
@@ -85,11 +87,11 @@ class OWBackend(PluginABC):
         if not battletag:
             return
 
-        response = self._make_owapi_request(
-            battletag,
-            'stats'
-        )
         try:
+            response = self._make_owapi_request(
+                battletag,
+                'stats'
+            )
             stats = {
                 **response[REGION]
                 ['stats']
@@ -134,7 +136,7 @@ class OWBackend(PluginABC):
                 channel=channel,
                 text=ow_message.make_me_pretty()
             )
-        except KeyError:
+        except requests.exceptions.HTTPError:
             self.slack_client.send_message(
                 channel=channel,
                 text=(
@@ -157,12 +159,13 @@ class OWBackend(PluginABC):
                 )
             )
             return
-        response = self._make_owapi_request(
-            battletag,
-            'heroes'
-        )
         # If u played 0 hours on a hero - API returns no info about it
         try:
+            response = self._make_owapi_request(
+                battletag,
+                'heroes'
+            )
+
             average_stats = (
                 response[REGION]
                 ['heroes']
@@ -179,14 +182,6 @@ class OWBackend(PluginABC):
                 [hero]
                 ['general_stats']
             )
-            # char_stats = general_stats = (
-            #     response[REGION]
-            #     ['heroes']
-            #     ['stats']
-            #     ['competitive']
-            #     [hero]
-            #     ['hero_stats']
-            # )
 
             hero_stats = {**average_stats, **general_stats}
 
@@ -199,14 +194,13 @@ class OWBackend(PluginABC):
                 channel=channel,
                 text=ow_message.make_me_pretty()
             )
-        except KeyError:
+        except (KeyError, requests.exceptions.HTTPError):
             self.slack_client.send_message(
                 channel=channel,
-                text="Sorry, you haven't played on `{}` enough time".format(
-                    hero,
+                text=(
+                    "*Sorry, you haven't played on `{}` enough time "
+                    "or your battletag is wrong*".format(
+                        hero,
+                    )
                 )
             )
-
-    @property
-    def slack_client(self):
-        return self._slack_client

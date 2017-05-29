@@ -8,3 +8,7 @@ class PluginABC(abc.ABC):
     @abc.abstractmethod
     def execute_command(self, data):
         pass
+
+    @property
+    def slack_client(self):
+        return self._slack_client
