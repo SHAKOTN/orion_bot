@@ -15,7 +15,7 @@ class Storage(abc.ABC):
             data: dict
     ):
         key = self._make_user_key(battletag)
-        self.set(
+        self.hmset(
             key,
             data
         )
@@ -25,19 +25,51 @@ class Storage(abc.ABC):
             battletag: str,
     ):
         key = self._make_user_key(battletag)
-        return self.get(key)
+        return self.hget(key)
 
-    def _make_user_key(self, battletag):
+    def _make_user_key(self, battletag: str):
         return "user:{}".format(
             battletag,
         )
+
+    def _make_slack_user_key(
+            self,
+            slack_user_name: str
+    ):
+        return "slack_user:{}".format(
+            slack_user_name
+        )
+
+    def get_battletag(
+            self,
+            slack_user_name: str
+    ):
+        key = self._make_slack_user_key(slack_user_name)
+        return self.get(key)
+
+    def set_battletag(
+            self,
+            slack_user_name: str,
+            battletag: str
+    ):
+        formatted_battletag = battletag.replace("#", "-")
+        key = self._make_slack_user_key(slack_user_name)
+        self.set(key, formatted_battletag)
 
     @abc.abstractmethod
     def get(self, key: str) -> dict:
         pass
 
     @abc.abstractmethod
-    def set(self, key: str, mapping: dict):
+    def set(self, key: str, data) -> dict:
+        pass
+
+    @abc.abstractmethod
+    def hget(self, key: str) -> dict:
+        pass
+
+    @abc.abstractmethod
+    def hmset(self, key: str, mapping: dict):
         pass
 
     @abc.abstractmethod
@@ -58,10 +90,16 @@ class LocMemStorage(Storage):
     def __init__(self):
         self._hashmaps = {}
 
-    def set(self, key: str, mapping: dict) -> None:
+    def get(self, key: str):
+        return self._hashmaps.get(key, "")
+
+    def set(self, key: str, data: str):
+        self._hashmaps[key] = data
+
+    def hmset(self, key: str, mapping: dict) -> None:
         self._hashmaps[key] = mapping
 
-    def get(self, key: str) -> dict:
+    def hget(self, key: str) -> dict:
         return self._hashmaps.get(key, {})
 
     def keys(self):
@@ -80,13 +118,22 @@ class LocMemStorage(Storage):
 
 class RedisStorage(Storage):
     def __init__(self, url):
-        self._redis = redis.from_url(url)
+        self._redis = redis.from_url(
+            url,
+            decode_responses=True
+        )
         super().__init__()
 
-    def set(self, key: str, mapping: dict) -> bool:
+    def get(self, key: str):
+        return str(self.redis.get(key))
+
+    def set(self, key: str, data: str):
+        self.redis.set(key, data)
+
+    def hmset(self, key: str, mapping: dict) -> bool:
         return self.redis.hmset(key, mapping)
 
-    def get(self, key: str) -> dict:
+    def hget(self, key: str) -> dict:
         return self.redis.hgetall(key)
 
     def keys(self) -> List[str]:

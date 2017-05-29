@@ -6,7 +6,7 @@ import requests
 from plugins.ow.messages import (OWDiffStatsMessage, OWHeroStatMessage,
                                  OWOverwallMessage)
 from plugins.ow.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
-                                 OW_STATS_KEY, USER_MAPPING, api_url)
+                                 OW_INIT_BATTLETAG_KEY, OW_STATS_KEY, api_url)
 from plugins.ow.storage.redis import redis_storage
 from plugins.plugin_abc import PluginABC
 from settings import AT_BOT
@@ -24,18 +24,30 @@ class OWBackend(PluginABC):
     def execute_command(self, data):
         text_parser = (
             lambda out:
-            out['text'].split(AT_BOT)[1].strip().lower()
+            out['text'].split(AT_BOT)[1].strip()
         )
 
         command = text_parser(data)
         channel = data['channel']
-        user_name = self.get_user_name(data['user'])
+        user_name = self.slack_client.get_user_name(data['user'])
 
         if command.startswith(OW_COMMAND):
-            battletag = USER_MAPPING[user_name]
 
             argument = command.lstrip(OW_COMMAND + " ")
 
+            # Init new user in storage with battletag then - break
+            if argument.startswith(OW_INIT_BATTLETAG_KEY):
+                battletag = argument.lstrip(OW_INIT_BATTLETAG_KEY + " ")
+                self.init_user(user_name, battletag)
+                self.slack_client.send_message(
+                    channel=channel,
+                    text="New user with battletag `{}` is set".format(
+                        battletag
+                    ),
+                )
+                return
+
+            battletag = redis_storage.get_battletag(user_name)
             if argument.startswith(OW_STATS_KEY):
                 self.send_overall_stats(battletag, channel)
 
@@ -52,21 +64,11 @@ class OWBackend(PluginABC):
                 text="`Could ypu please repeat? I didn't get it!!!`",
             )
 
-    def get_user_name(self, user_id):
-        return (
-            self.get_user_info(user_id)['user']['name']
-        )
-
-    def get_user_info(self, user_id):
-        return self.slack_client.api_call(
-            'users.info',
-            user=user_id
-        )
-
     def _make_owapi_request(self, tag: str, endp: str):
         headers = {
             'User-Agent': 'SlackBot'
         }
+        # TODO: Write a wrapper to handle 400 response instead of handling KeyError below
         return requests.get(
             api_url.format(
                 battletag=tag,
@@ -74,6 +76,9 @@ class OWBackend(PluginABC):
             ),
             headers=headers
         ).json()
+
+    def init_user(self, username, battletag):
+        redis_storage.set_battletag(username, battletag)
 
     def send_overall_stats(self, battletag, channel):
 
@@ -84,50 +89,59 @@ class OWBackend(PluginABC):
             battletag,
             'stats'
         )
-        stats = {
-            **response[REGION]
-            ['stats']
-            ['competitive']
-            ['overall_stats'],
-            **response[REGION]
-            ['stats']
-            ['competitive']
-            ['game_stats']
-        }
+        try:
+            stats = {
+                **response[REGION]
+                ['stats']
+                ['competitive']
+                ['overall_stats'],
+                **response[REGION]
+                ['stats']
+                ['competitive']
+                ['game_stats']
+            }
 
-        curr_cache_stats = {
-            "comprank": stats["comprank"],
-            "level": str(
-                int(stats["level"]) + int(stats["prestige"]) * 100
-            )
-        }
+            curr_cache_stats = {
+                "comprank": stats["comprank"],
+                "level": str(
+                    int(stats["level"]) + int(stats["prestige"]) * 100
+                )
+            }
 
-        prev_cache_stats = redis_storage.get_user_stats(battletag)
-        if prev_cache_stats:
-            diff_message = OWDiffStatsMessage(
+            prev_cache_stats = redis_storage.get_user_stats(battletag)
+            if prev_cache_stats:
+                diff_message = OWDiffStatsMessage(
+                    battletag,
+                    prev_data=prev_cache_stats,
+                    curr_data=curr_cache_stats
+                )
+
+                self.slack_client.send_message(
+                    channel=channel,
+                    text=diff_message.make_me_pretty()
+                )
+
+            redis_storage.update_user(
                 battletag,
-                prev_data=prev_cache_stats,
-                curr_data=curr_cache_stats
+                curr_cache_stats
             )
 
+            ow_message = OWOverwallMessage(
+                battletag,
+                stats
+            )
             self.slack_client.send_message(
                 channel=channel,
-                text=diff_message.make_me_pretty()
+                text=ow_message.make_me_pretty()
             )
-
-        redis_storage.update_user(
-            battletag,
-            curr_cache_stats
-        )
-
-        ow_message = OWOverwallMessage(
-            battletag,
-            stats
-        )
-        self.slack_client.send_message(
-            channel=channel,
-            text=ow_message.make_me_pretty()
-        )
+        except KeyError:
+            self.slack_client.send_message(
+                channel=channel,
+                text=(
+                    "*Probably you've set invalid battletag. "
+                    "Try *`@orion ow init your-battletag`"
+                )
+            )
 
     def send_hero_stats(self, battletag, channel, hero):
         if not battletag:

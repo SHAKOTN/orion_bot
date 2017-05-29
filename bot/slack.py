@@ -19,6 +19,13 @@ class SlackGateway(SlackClient):
             as_user=True
         )
 
+    def get_user_name(self, user_id):
+        response = self.api_call(
+            'users.info',
+            user=user_id
+        )
+        return response['user']['name']
+
     def load_plugins(self):
         plugins_classes = [
             import_string(cls) for cls in PLUGIN_CLASSES.values()

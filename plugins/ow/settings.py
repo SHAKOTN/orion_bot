@@ -25,15 +25,10 @@ OW_HEROES_MAPPING = {
     'sombra': 'dps',
     'lucio': 'support'
 }
-USER_MAPPING = {
-    "jade": "Jadeskycore-2824",
-    "moviedogball": "MDB-21234",
-    "hunson.abadeer": "InSoulEmpty-2817",
-    "den4ik": "ЕдкийЕж-27502"
-}
 OW_COMMAND = "ow"
 OW_STATS_KEY = "stats"
 OW_HEROES_KEY = "hero"
+OW_INIT_BATTLETAG_KEY = "init"
 OW_TANK = 'tank'
 OW_DPS = 'dps'
 OW_SUPPORT = 'support'
