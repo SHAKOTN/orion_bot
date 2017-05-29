@@ -19,7 +19,7 @@ class Storage(abc.ABC):
             key,
             data
         )
-
+    # TODO: Create more unique key for user with battletag
     def get_user_stats(
             self,
             battletag: str,

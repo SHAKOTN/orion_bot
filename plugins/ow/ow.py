@@ -30,7 +30,7 @@ class OWBackend(PluginABC):
         command = text_parser(data)
         channel = data['channel']
         user_name = self.slack_client.get_user_name(data['user'])
-
+        # TODO: Write a string parser for output cause this is a trash
         if command.startswith(OW_COMMAND):
 
             argument = command.lstrip(OW_COMMAND + " ")
