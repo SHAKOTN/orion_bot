@@ -1,4 +1,5 @@
 import abc
+import re
 
 from typing import List
 
@@ -29,7 +30,7 @@ class NotesStorage(abc.ABC):
         )
 
         keys = map(
-            lambda key: key.lstrip(self.KEY_PATTERN),
+            lambda key: key.replace(self.KEY_PATTERN, ''),
             notes_keys
         )
         return list(keys)

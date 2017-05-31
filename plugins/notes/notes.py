@@ -44,12 +44,12 @@ class NotesBackend(PluginABC):
                     self.add_note(key, note)
 
             elif arguments.startswith(DELETE_NOTE):
-                key = arguments.lstrip(DELETE_NOTE + " ")
-                self.delete_note(key)
+                key = arguments.lstrip(DELETE_NOTE)
+                self.delete_note(key.lstrip())
 
             elif arguments.startswith(SHOW_NOTE):
-                key = arguments.lstrip(SHOW_NOTE + " ")
-                self.print_note(key, channel)
+                key = arguments.lstrip(SHOW_NOTE)
+                self.print_note(key.lstrip(), channel)
 
             elif not arguments:
                 self.show_stored_notes(channel)
