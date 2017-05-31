@@ -63,9 +63,16 @@ class NotesBackend(PluginABC):
         )
 
     def print_note(self, note_key, channel):
+        note = redis_storage.get_note(note_key)
+        if note != "None":
+            msg = note.strip()
+        else:
+            msg = f"*Sorry, there is no `{note_key}` note. Use one from above*"
+            self.show_stored_notes(channel)
+
         self.slack_client.send_message(
             channel=channel,
-            text=f">>>*{redis_storage.get_note(note_key)}*",
+            text=msg,
         )
 
     def show_stored_notes(self, channel):
