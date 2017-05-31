@@ -58,7 +58,7 @@ class NotesBackend(PluginABC):
     def print_note(self, note_key, channel):
         self.slack_client.send_message(
             channel=channel,
-            text=f">>>{redis_storage.get_note(note_key)}",
+            text=f">>>*{redis_storage.get_note(note_key)}*",
         )
 
     def show_stored_notes(self, channel):
