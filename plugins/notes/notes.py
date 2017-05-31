@@ -1,4 +1,5 @@
 import logging
+import re
 
 from plugins.notes.settings import CREATE_NOTE, NOTES_COMMAND, SHOW_NOTE
 from plugins.notes.storage.redis import redis_storage
@@ -23,19 +24,25 @@ class NotesBackend(PluginABC):
         channel = data['channel']
         user_name = self.slack_client.get_user_name(data['user'])
 
-        # Set note, see list of notes, edit note, watch note
         # Syntax for notes: @orion note key %note text here%
         if command.startswith(NOTES_COMMAND):
 
             arguments = command.lstrip(NOTES_COMMAND).lstrip()
 
             if arguments.startswith(CREATE_NOTE):
-                pure_arguments = arguments.lstrip(CREATE_NOTE + " ")
-                splitted_argument = pure_arguments.split("%")
+                key_and_note = arguments.lstrip(CREATE_NOTE + " ")
 
-                key = splitted_argument[0].rstrip()
-                note = splitted_argument[1]
+                key_search = re.search(r"(.*?)\s.*", key_and_note)
+                key = (
+                    key_search.group(1) if key_search
+                    else 'default'
+                )
 
+                note_search = re.search(r'%(.*?)%.*', key_and_note)
+                note = (
+                    note_search.group(1) if note_search
+                    else 'empty'
+                )
                 self.add_note(key, note)
 
             elif arguments.startswith(SHOW_NOTE):
