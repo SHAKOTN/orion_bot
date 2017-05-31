@@ -58,11 +58,11 @@ class OWBackend(PluginABC):
                     channel,
                     hero.lstrip()
                 )
-        else:
-            self.slack_client.send_message(
-                channel=channel,
-                text="`Could ypu please repeat? I didn't get it!!!`",
-            )
+            else:
+                self.slack_client.send_message(
+                    channel=channel,
+                    text="`Could ypu please repeat? I didn't get it!!!`",
+                )
 
     def _make_owapi_request(self, tag: str, endp: str):
         headers = {
