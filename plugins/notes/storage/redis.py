@@ -8,6 +8,7 @@ from plugins.notes.storage.settings import ENVIRONMENT, REDIS_CLASS
 
 
 class NotesStorage(abc.ABC):
+    KEY_PATTERN = "note_key:"
 
     def set_note(self, note_key: str, note: str):
         note_key = self._make_note_redis_key(note_key)
@@ -17,8 +18,19 @@ class NotesStorage(abc.ABC):
         note_key = self._make_note_redis_key(note_key)
         return self.get(note_key)
 
+    def get_all_notes_names(self):
+        notes_keys = self.keys(
+            self.KEY_PATTERN + "*"
+        )
+
+        keys = map(
+            lambda key: key.lstrip(self.KEY_PATTERN),
+            notes_keys
+        )
+        return list(keys)
+
     def _make_note_redis_key(self, key):
-        return "note_key:{}".format(key)
+        return (self.KEY_PATTERN + "{}").format(key)
 
     @abc.abstractmethod
     def get(self, key: str) -> dict:
@@ -29,7 +41,7 @@ class NotesStorage(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def keys(self):
+    def keys(self, pattern: str=None) -> List[str]:
         pass
 
     @abc.abstractmethod
@@ -52,7 +64,7 @@ class LocMemNotesStorage(NotesStorage):
     def set(self, key: str, data: str):
         self._hashmaps[key] = data
 
-    def keys(self):
+    def keys(self, pattern: str=None) -> List[str]:
         return self._hashmaps.keys()
 
     def clear(self):
@@ -80,8 +92,8 @@ class RedisNotesStorage(NotesStorage):
     def set(self, key: str, data: str):
         self.redis.set(key, data)
 
-    def keys(self) -> List[str]:
-        return self.redis.keys()
+    def keys(self, pattern: str=None) -> List[str]:
+        return self.redis.keys(pattern)
 
     def clear(self):
         pass

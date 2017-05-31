@@ -41,6 +41,8 @@ class NotesBackend(PluginABC):
             elif arguments.startswith(SHOW_NOTE):
                 key = arguments.lstrip(SHOW_NOTE + " ")
                 self.print_note(key, channel)
+            elif not arguments:
+                self.show_stored_notes(channel)
             else:
                 self.slack_client.send_message(
                     channel=channel,
@@ -57,4 +59,10 @@ class NotesBackend(PluginABC):
         self.slack_client.send_message(
             channel=channel,
             text=f">>>{redis_storage.get_note(note_key)}",
+        )
+
+    def show_stored_notes(self, channel):
+        self.slack_client.send_message(
+            channel=channel,
+            text=f"*Notes in storage -* `{redis_storage.get_all_notes_names()}`",
         )
