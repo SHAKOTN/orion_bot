@@ -16,7 +16,12 @@ class NotesStorage(abc.ABC):
 
     def get_note(self, note_key: str):
         note_key = self._make_note_redis_key(note_key)
-        return self.get(note_key)
+        note = self.get(note_key)
+        return None if note == 'None' else note
+
+    def delete_note(self, note_key: str):
+        note_key = self._make_note_redis_key(note_key)
+        self.delete(note_key)
 
     def get_all_notes_names(self):
         notes_keys = self.keys(
@@ -65,7 +70,7 @@ class LocMemNotesStorage(NotesStorage):
         self._hashmaps[key] = data
 
     def keys(self, pattern: str=None) -> List[str]:
-        return self._hashmaps.keys()
+        return list(self._hashmaps.keys())
 
     def clear(self):
         self._hashmaps = {}
