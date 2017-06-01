@@ -8,7 +8,9 @@ Available plugins right now:
 - SoundCloud: *coming soon*
 - File storage: *coming soon*
 
-All you need to do is to specify 3 ENV_VARIABLES: 
+**NOTE**: You can remove plugins from *plugins/* directory if you don't want to use them.
+
+All you need to do is to specify 5 ENV_VARIABLES:
 - BOT_ID : Your slackbot ID
 - REGION : EU/US (for overwatch plugin: if you don't use it - just skip this)
 - SLACK_BOT_TOKEN : You can obtain it on web.slack.com
