@@ -1,3 +1,4 @@
 requests==2.14.2
 slackclient==1.0.5
 redis==2.10.5
+parse==1.8.2

@@ -3,6 +3,7 @@ import os
 
 import requests
 
+from bot.parser import Parser
 from plugins.ow.messages import (OWDiffStatsMessage, OWHeroStatMessage,
                                  OWOverwallMessage)
 from plugins.ow.settings import (OW_COMMAND, OW_HEROES_KEY, OW_HEROES_MAPPING,
@@ -30,14 +31,19 @@ class OWBackend(PluginABC):
         command = text_parser(data)
         channel = data['channel']
         user_name = self.slack_client.get_user_name(data['user'])
-        # TODO: Write a string parser for output cause this is a trash
+
         if command.startswith(OW_COMMAND):
 
-            argument = command.lstrip(OW_COMMAND + " ")
+            parser = Parser(OW_COMMAND)
+            parser.add_command(OW_STATS_KEY, bool)
+            parser.add_command(OW_HEROES_KEY, dict)
+            parser.add_command(OW_INIT_BATTLETAG_KEY, dict)
+
+            parser.parse(command)
 
             # Init new user in storage with battletag then - break
-            if argument.startswith(OW_INIT_BATTLETAG_KEY):
-                battletag = argument.lstrip(OW_INIT_BATTLETAG_KEY + " ")
+            if parser.init:
+                battletag = parser.init
                 self.init_user(user_name, battletag)
                 self.slack_client.send_message(
                     channel=channel,
@@ -48,15 +54,14 @@ class OWBackend(PluginABC):
                 return
 
             battletag = redis_storage.get_battletag(user_name)
-            if argument.startswith(OW_STATS_KEY):
+            if parser.stats:
                 self.send_overall_stats(battletag, channel)
 
-            elif argument.startswith(OW_HEROES_KEY):
-                hero = argument.lstrip(OW_HEROES_KEY)
+            elif parser.hero:
                 self.send_hero_stats(
                     battletag,
                     channel,
-                    hero.lstrip()
+                    parser.hero
                 )
             else:
                 self.slack_client.send_message(

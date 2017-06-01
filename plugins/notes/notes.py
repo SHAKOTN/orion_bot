@@ -24,7 +24,7 @@ class NotesBackend(PluginABC):
 
         command = text_parser(data)
         channel = data['channel']
-        user_name = self.slack_client.get_user_name(data['user'])
+        # user_name = self.slack_client.get_user_name(data['user'])
 
         # Syntax for notes: @orion note key %note text here%
         if command.startswith(NOTES_COMMAND):
