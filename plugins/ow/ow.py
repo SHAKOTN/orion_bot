@@ -66,7 +66,7 @@ class OWBackend(PluginABC):
             else:
                 self.slack_client.send_message(
                     channel=channel,
-                    text="`Could ypu please repeat? I didn't get it!!!`",
+                    text=f"`Known command for this plugin are`\n {parser.get_help()}",
                 )
 
     def _make_owapi_request(self, tag: str, endp: str):

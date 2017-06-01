@@ -48,6 +48,10 @@ class NotesBackend(PluginABC):
                 self.print_note(key, channel)
             else:
                 self.show_stored_notes(channel)
+                self.slack_client.send_message(
+                    channel=channel,
+                    text=f"`Known command for this plugin are`\n {parser.get_help()}",
+                )
 
     def add_note(self, note_key, note_body):
         timestamp = int(time.time())

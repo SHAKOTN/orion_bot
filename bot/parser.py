@@ -27,6 +27,12 @@ class Parser:
         else:
             return
 
+    def get_help(self):
+        help_strings = []
+        for cmd in self._commands:
+            help_strings.append(f"-*{cmd.name}*")
+        return '\n'.join(help_strings)
+
 
 class Command:
     def __init__(self, parser_cls, name, destination_field=None):
@@ -43,7 +49,10 @@ class Command:
 
 class BoolCommand(Command):
     def parse_source(self, source):
-        parse_result = parse(f"{self.parser.header} {{}}", source)
+        parse_result = parse(
+            f"{self.parser.header} {{}}",
+            source
+        )
         if parse_result and parse_result[0] == self.destination:
             setattr(self.parser, self.destination, True)
         else:
@@ -52,7 +61,10 @@ class BoolCommand(Command):
 
 class ValueCommand(Command):
     def parse_source(self, source):
-        parse_result = parse(f"{self.parser.header} {self.destination} {{}}", source)
+        parse_result = parse(
+            f"{self.parser.header} {self.destination} {{}}",
+            source
+        )
         if parse_result and parse_result[0]:
             setattr(self.parser, self.destination, parse_result[0])
         else:
@@ -61,7 +73,10 @@ class ValueCommand(Command):
 
 class KeyValueCommand(Command):
     def parse_source(self, source):
-        parse_result = parse(f"{self.parser.header} {self.destination} {{}} {{}}", source)
+        parse_result = parse(
+            f"{self.parser.header} {self.destination} {{}} {{}}",
+            source
+        )
         if parse_result and parse_result[0] and parse_result[1]:
             setattr(self.parser, self.destination, (parse_result[0], parse_result[1]))
         else:
