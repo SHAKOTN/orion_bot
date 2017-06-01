@@ -16,7 +16,11 @@ class Parser:
             self._commands.append(
                 BoolCommand(self, name, destination)
             )
-        elif kind == dict:
+        elif kind == str:
+            self._commands.append(
+                ValueCommand(self, name, destination)
+            )
+        elif kind == tuple:
             self._commands.append(
                 KeyValueCommand(self, name, destination)
             )
@@ -41,10 +45,19 @@ class BoolCommand(Command):
             setattr(self.parser, self.name, False)
 
 
-class KeyValueCommand(Command):
+class ValueCommand(Command):
     def parse_source(self, source):
         parse_result = parse(f"{self.parser.header} {self.name} {{}}", source)
         if parse_result and parse_result[0]:
             setattr(self.parser, self.name, parse_result[0])
         else:
             setattr(self.parser, self.name, None)
+
+
+class KeyValueCommand(Command):
+    def parse_source(self, source):
+        parse_result = parse(f"{self.parser.header} {self.name} {{}} {{}}", source)
+        if parse_result and parse_result[0] and parse_result[1]:
+            setattr(self.parser, self.name, (parse_result[0], parse_result[1]))
+        else:
+            setattr(self.parser, self.name, {})

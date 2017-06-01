@@ -2,6 +2,7 @@ import logging
 import re
 import time
 
+from bot.parser import Parser
 from plugins.notes.settings import (CREATE_NOTE, DELETE_NOTE, NOTES_COMMAND,
                                     SHOW_NOTE)
 from plugins.notes.storage.redis import redis_storage
@@ -29,36 +30,24 @@ class NotesBackend(PluginABC):
         # Syntax for notes: @orion note key %note text here%
         if command.startswith(NOTES_COMMAND):
 
-            arguments = command.lstrip(NOTES_COMMAND).lstrip()
+            parser = Parser(NOTES_COMMAND)
+            parser.add_command(CREATE_NOTE, tuple)
+            parser.add_command(DELETE_NOTE, str)
+            parser.add_command(SHOW_NOTE, str)
+            parser.parse(command)
+            if getattr(parser, CREATE_NOTE):
+                key, note = getattr(parser, CREATE_NOTE)
+                self.add_note(key, note)
 
-            if arguments.startswith(CREATE_NOTE):
-                key_and_note = arguments.lstrip(CREATE_NOTE + " ")
-                key_search = re.search(r"(.*?)\s.*", key_and_note)
-                note_search = re.search(r'\s%(.*?)%.*', key_and_note)
+            elif getattr(parser, DELETE_NOTE):
+                key = getattr(parser, DELETE_NOTE)
+                self.delete_note(key)
 
-                if not key_search or not note_search:
-                    self.print_no_data_message(channel)
-                else:
-                    key = key_search.group(1)
-                    note = note_search.group(1)
-                    self.add_note(key, note)
-
-            elif arguments.startswith(DELETE_NOTE):
-                key = arguments.lstrip(DELETE_NOTE)
-                self.delete_note(key.lstrip())
-
-            elif arguments.startswith(SHOW_NOTE):
-                key = arguments.lstrip(SHOW_NOTE)
-                self.print_note(key.lstrip(), channel)
-
-            elif not arguments:
-                self.show_stored_notes(channel)
-
+            elif getattr(parser, SHOW_NOTE):
+                key = getattr(parser, SHOW_NOTE)
+                self.print_note(key, channel)
             else:
-                self.slack_client.send_message(
-                    channel=channel,
-                    text="`Could ypu please repeat? I didn't get it!!!`",
-                )
+                self.show_stored_notes(channel)
 
     def add_note(self, note_key, note_body):
         timestamp = int(time.time())
