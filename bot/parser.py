@@ -60,4 +60,4 @@ class KeyValueCommand(Command):
         if parse_result and parse_result[0] and parse_result[1]:
             setattr(self.parser, self.name, (parse_result[0], parse_result[1]))
         else:
-            setattr(self.parser, self.name, {})
+            setattr(self.parser, self.name, ())
