@@ -24,6 +24,8 @@ class Parser:
             self._commands.append(
                 KeyValueCommand(self, name, destination)
             )
+        else:
+            return
 
 
 class Command:
@@ -51,7 +53,7 @@ class ValueCommand(Command):
         if parse_result and parse_result[0]:
             setattr(self.parser, self.name, parse_result[0])
         else:
-            setattr(self.parser, self.name, None)
+            setattr(self.parser, self.name, "")
 
 
 class KeyValueCommand(Command):
