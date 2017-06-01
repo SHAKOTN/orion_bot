@@ -32,7 +32,10 @@ class Command:
     def __init__(self, parser_cls, name, destination_field=None):
         self.parser = parser_cls
         self.name = name
-        self.destination = destination_field
+        self.destination = (
+            destination_field if destination_field
+            else self.name
+        )
 
     def parse_source(self, source):
         pass
@@ -41,25 +44,25 @@ class Command:
 class BoolCommand(Command):
     def parse_source(self, source):
         parse_result = parse(f"{self.parser.header} {{}}", source)
-        if parse_result and parse_result[0] == self.name:
-            setattr(self.parser, self.name, True)
+        if parse_result and parse_result[0] == self.destination:
+            setattr(self.parser, self.destination, True)
         else:
-            setattr(self.parser, self.name, False)
+            setattr(self.parser, self.destination, False)
 
 
 class ValueCommand(Command):
     def parse_source(self, source):
-        parse_result = parse(f"{self.parser.header} {self.name} {{}}", source)
+        parse_result = parse(f"{self.parser.header} {self.destination} {{}}", source)
         if parse_result and parse_result[0]:
-            setattr(self.parser, self.name, parse_result[0])
+            setattr(self.parser, self.destination, parse_result[0])
         else:
-            setattr(self.parser, self.name, "")
+            setattr(self.parser, self.destination, "")
 
 
 class KeyValueCommand(Command):
     def parse_source(self, source):
-        parse_result = parse(f"{self.parser.header} {self.name} {{}} {{}}", source)
+        parse_result = parse(f"{self.parser.header} {self.destination} {{}} {{}}", source)
         if parse_result and parse_result[0] and parse_result[1]:
-            setattr(self.parser, self.name, (parse_result[0], parse_result[1]))
+            setattr(self.parser, self.destination, (parse_result[0], parse_result[1]))
         else:
-            setattr(self.parser, self.name, ())
+            setattr(self.parser, self.destination, ())
