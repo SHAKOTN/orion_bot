@@ -14,7 +14,7 @@ if __name__ == "__main__":
         logger.info("StarterBot connected and running!")
 
         while True:
-            cmd, chat, user = slack_backend.parse_slack_output()
+            slack_backend.parse_slack_output()
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         logger.info("Connection failed. Invalid Slack token or bot ID?")

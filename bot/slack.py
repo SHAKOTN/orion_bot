@@ -46,7 +46,6 @@ class SlackGateway(SlackClient):
                 if output and 'text' in output and AT_BOT in output['text']:
                     for plugin in self._plugins:
                         plugin.execute_command(output)
-        return None, None, None
 
 
 slack_backend = SlackGateway(os.environ.get('SLACK_BOT_TOKEN'))
