@@ -35,15 +35,15 @@ class NotesBackend(PluginABC):
             parser.add_command(DELETE_NOTE, str)
             parser.add_command(SHOW_NOTE, str)
             parser.parse(command)
-            if getattr(parser, CREATE_NOTE):
+            if hasattr(parser, CREATE_NOTE):
                 key, note = getattr(parser, CREATE_NOTE)
                 self.add_note(key, note)
 
-            elif getattr(parser, DELETE_NOTE):
+            elif hasattr(parser, DELETE_NOTE):
                 key = getattr(parser, DELETE_NOTE)
                 self.delete_note(key)
 
-            elif getattr(parser, SHOW_NOTE):
+            elif hasattr(parser, SHOW_NOTE):
                 key = getattr(parser, SHOW_NOTE)
                 self.print_note(key, channel)
             else:

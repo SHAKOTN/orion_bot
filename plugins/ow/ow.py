@@ -42,7 +42,7 @@ class OWBackend(PluginABC):
             parser.parse(command)
 
             # Init new user in storage with battletag then - break
-            if getattr(parser, OW_INIT_BATTLETAG_KEY):
+            if hasattr(parser, OW_INIT_BATTLETAG_KEY):
                 battletag = getattr(parser, OW_INIT_BATTLETAG_KEY)
                 self.init_user(user_name, battletag)
                 self.slack_client.send_message(
@@ -54,10 +54,10 @@ class OWBackend(PluginABC):
                 return
 
             battletag = redis_storage.get_battletag(user_name)
-            if getattr(parser, OW_STATS_KEY):
+            if hasattr(parser, OW_STATS_KEY):
                 self.send_overall_stats(battletag, channel)
 
-            elif getattr(parser, OW_HEROES_KEY):
+            elif hasattr(parser, OW_HEROES_KEY):
                 self.send_hero_stats(
                     battletag,
                     channel,

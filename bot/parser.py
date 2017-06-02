@@ -55,8 +55,6 @@ class BoolCommand(Command):
         )
         if parse_result and parse_result[0] == self.destination:
             setattr(self.parser, self.destination, True)
-        else:
-            setattr(self.parser, self.destination, False)
 
 
 class ValueCommand(Command):
@@ -67,8 +65,6 @@ class ValueCommand(Command):
         )
         if parse_result and parse_result[0]:
             setattr(self.parser, self.destination, parse_result[0])
-        else:
-            setattr(self.parser, self.destination, "")
 
 
 class KeyValueCommand(Command):
@@ -79,5 +75,3 @@ class KeyValueCommand(Command):
         )
         if parse_result and parse_result[0] and parse_result[1]:
             setattr(self.parser, self.destination, (parse_result[0], parse_result[1]))
-        else:
-            setattr(self.parser, self.destination, ())
