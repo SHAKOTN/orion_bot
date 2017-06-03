@@ -1,4 +1,5 @@
 PLUGIN_CLASSES = {
-    'ow': "plugins.OWBackend",
-    'notes': "plugins.NotesBackend"
+    'ow': "plugins.OWPlugin",
+    'notes': "plugins.NotesPlugin",
+    'weather': 'plugins.WeatherPlugin'
 }

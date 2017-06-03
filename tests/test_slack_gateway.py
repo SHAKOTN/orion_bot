@@ -22,13 +22,13 @@ class TestSlackGateway(TestCase):
         assert slack_backend
 
         slack_backend.load_plugins({
-            'ow': "plugins.OWBackend",
+            'ow': "plugins.OWPlugin",
         })
 
         assert len(slack_backend._plugins) == 1
 
         slack_backend.load_plugins({
-            'notes': "plugins.NotesBackend"
+            'notes': "plugins.NotesPlugin"
         })
 
         assert len(slack_backend._plugins) == 2
@@ -48,7 +48,7 @@ class TestSlackGateway(TestCase):
 
         slack_backend.load_plugins(PLUGIN_CLASSES)
 
-        assert len(slack_backend._plugins) == 2
+        assert len(slack_backend._plugins) == len(PLUGIN_CLASSES.keys())
 
         plugin = slack_backend._plugins[0]
 

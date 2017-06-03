@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 REGION = os.environ.get('REGION')
 
 
-class OWBackend(PluginABC):
+class OWPlugin(PluginABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -73,6 +73,7 @@ class OWBackend(PluginABC):
         headers = {
             'User-Agent': 'SlackBot'
         }
+        # Without params because of OW API architecture
         response = requests.get(
             api_url.format(
                 battletag=tag,
@@ -82,7 +83,7 @@ class OWBackend(PluginABC):
         )
         response.raise_for_status()
 
-        return response.json()
+        return response
 
     def init_user(self, username, battletag):
         redis_storage.set_battletag(username, battletag)

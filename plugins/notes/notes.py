@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class NotesBackend(PluginABC):
+class NotesPlugin(PluginABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
