@@ -1,7 +1,6 @@
 import os
 
 from bot.utils import import_string
-from plugins.settings import PLUGIN_CLASSES
 from settings import AT_BOT
 from slackclient import SlackClient
 
@@ -9,7 +8,7 @@ from slackclient import SlackClient
 class SlackGateway(SlackClient):
     def __init__(self, token):
         super().__init__(token=token)
-        self._plugins = self.load_plugins()
+        self._plugins = []
 
     def send_message(self, channel, text):
         self.api_call(
@@ -26,16 +25,13 @@ class SlackGateway(SlackClient):
         )
         return response['user']['name']
 
-    def load_plugins(self):
+    def load_plugins(self, plugin_classes):
         plugins_classes = [
-            import_string(cls) for cls in PLUGIN_CLASSES.values()
+            import_string(cls) for cls in plugin_classes.values()
         ]
-        plugins = []
         for plugin_class in plugins_classes:
             plugin = plugin_class(client=self)
-            plugins.append(plugin)
-
-        return plugins
+            self._plugins.append(plugin)
 
     def parse_slack_output(self):
 
