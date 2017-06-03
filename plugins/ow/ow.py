@@ -83,7 +83,7 @@ class OWPlugin(PluginABC):
         )
         response.raise_for_status()
 
-        return response
+        return response.json()
 
     def init_user(self, username, battletag):
         redis_storage.set_battletag(username, battletag)
