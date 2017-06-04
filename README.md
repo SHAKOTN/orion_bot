@@ -1,4 +1,4 @@
-<h3>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat.
+<h4>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat
 
 This thing is ready to be deployed to Heroku (Procfile and requirements.txt are created and filled).
 
