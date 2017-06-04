@@ -27,23 +27,23 @@ If you want to run it locally - just clone repo, specify ENV variables and make:
 python bot/core.py
 ```
 
-<h3>Examples of plugins
+<h1>Examples of plugins
 
-<h4> Overwatch Plugin
+<h2> Overwatch Plugin
 
 ![Alt text](http://i.imgur.com/IgMcsWM.png "Overwatch stats")
 
 ![Alt text](http://i.imgur.com/ZgiwDYY.png "Overwatch hero stats")
 
-<h4> Notes plugin
+<h2> Notes plugin
 
 ![Alt text](http://i.imgur.com/jrYDjiG.png "Notes ")
 
 ![Alt text](http://i.imgur.com/jo3VpZH.png "Show note")
 
-<h4> Storage plugin
+<h2> Storage plugin
 
-<h5> Also works good with .webm, .jpeg, .png
+<h3> Also works good with .webm, .jpeg, .png
 
 ![Alt text](http://i.imgur.com/WQGkoB4.png "List directory")
 
