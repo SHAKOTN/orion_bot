@@ -1,4 +1,4 @@
-<h4>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat.</h4>
+<h3>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat.</h4>
 
 This thing is ready to be deployed to Heroku (Procfile and requirements.txt are created and filled).
 
@@ -26,3 +26,9 @@ If you want to run it locally - just clone repo, specify ENV variables and make:
 ```bash
 python bot/core.py
 ```
+
+<h3>Examples of plugins<h3>
+
+<h4> Overwatch Plugin <h4>
+
+![Alt text](http://i.imgur.com/Rjyw7XQ.png "Overwatch stats")

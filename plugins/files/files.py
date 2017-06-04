@@ -69,9 +69,8 @@ class FilesPlugin(PluginABC):
                 file_name
             )
 
-            dest_file = open(f'tempo{file_type_re.group(1)}', 'wb')
-            dest_file.write(response.content)
-            dest_file.close()
+            with open(f'tempo{file_type_re.group(1)}', 'wb') as f:
+                f.write(response.content)
 
             self.slack_client.upload_file(
                 f'tempo{file_type_re.group(1)}',
