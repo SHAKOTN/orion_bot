@@ -1,5 +1,7 @@
 import os
 
+import requests
+
 from bot.utils import import_string
 from settings import AT_BOT
 from slackclient import SlackClient
@@ -17,6 +19,46 @@ class SlackGateway(SlackClient):
             text=text,
             as_user=True
         )
+
+    def upload_file(
+            self,
+            filepath,
+            channels,
+            filename=None,
+            content=None,
+            title=None,
+            initial_comment=None):
+
+        data = dict()
+        data['token'] = os.environ.get('SLACK_BOT_TOKEN')
+        data['file'] = filepath
+        data['filename'] = filename
+        data['channels'] = channels
+
+        if content is not None:
+            data['content'] = content
+
+        if title is not None:
+            data['title'] = title
+
+        if initial_comment is not None:
+            data['initial_comment'] = initial_comment
+
+        filepath = data['file']
+        files = {
+            'file': (filepath, open(filepath, 'rb'), 'image/png', {
+                'Expires': '0'
+            })
+        }
+        data['media'] = files
+        response = requests.post(
+            url='https://slack.com/api/files.upload',
+            data=data,
+            headers={'Accept': 'application/json'},
+            files=files
+        )
+
+        return response.text
 
     def get_user_name(self, user_id):
         response = self.api_call(
