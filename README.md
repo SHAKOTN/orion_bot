@@ -31,4 +31,7 @@ python bot/core.py
 
 <h4> Overwatch Plugin <h4>
 
-![Alt text](http://i.imgur.com/Rjyw7XQ.png "Overwatch stats")
+![Alt text](http://i.imgur.com/IgMcsWM.png "Overwatch stats")
+
+![Alt text](http://i.imgur.com/ZgiwDYY.png "Overwatch stats")
+
