@@ -1,4 +1,4 @@
-<h3>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat.</h4>
+<h3>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat.
 
 This thing is ready to be deployed to Heroku (Procfile and requirements.txt are created and filled).
 
@@ -27,11 +27,26 @@ If you want to run it locally - just clone repo, specify ENV variables and make:
 python bot/core.py
 ```
 
-<h3>Examples of plugins<h3>
+<h3>Examples of plugins
 
-<h4> Overwatch Plugin <h4>
+<h4> Overwatch Plugin
 
 ![Alt text](http://i.imgur.com/IgMcsWM.png "Overwatch stats")
 
-![Alt text](http://i.imgur.com/ZgiwDYY.png "Overwatch stats")
+![Alt text](http://i.imgur.com/ZgiwDYY.png "Overwatch hero stats")
+
+<h4> Notes plugin
+
+![Alt text](http://i.imgur.com/jrYDjiG.png "Notes ")
+
+![Alt text](http://i.imgur.com/jo3VpZH.png "Show note")
+
+<h4> Storage plugin
+
+<h5> Also works good with .webm, .jpeg, .png
+
+![Alt text](http://i.imgur.com/WQGkoB4.png "List directory")
+
+![Alt text](http://i.imgur.com/8IMW49n.png "Show file")
+
 
