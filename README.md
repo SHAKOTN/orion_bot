@@ -6,8 +6,8 @@ Available plugins right now:
 - Overwatch: Statistics, hero stats etc
 - Notes: Create, edit and share notes with your slackmates in channels
 - Weather: Ask bot to print the weather of the city
+- File storage(files): Store your files in dropbox
 - SoundCloud: *coming soon*
-- File storage: *coming soon*
 
 **NOTE**: You can remove plugins from *plugins/* directory if you don't want to use them.
 
@@ -17,6 +17,7 @@ All you need to do is to specify 5 ENV_VARIABLES:
 - APIXU_API_KEY: Weather service token(Apixu). This is very friendly and free to use service.
 Just skip this if you don't want to use weather plugin
 - SLACK_BOT_TOKEN : You can obtain it on web.slack.com
+- DROPBOX_TOKEN: Dropbox app token for *files* plugin
 - ENV : set to *development* if you don't have redis and want to use local memory.
 Set to *production* if you want to use your redis to store data from plugins
 - REDIS_URL: Redis URL if you set ENV to *production*

@@ -46,7 +46,7 @@ class SlackGateway(SlackClient):
 
         filepath = data['file']
         files = {
-            'file': (filepath, open(filepath, 'rb'), 'image/png', {
+            'file': (filepath, open(filepath, 'rb'), {
                 'Expires': '0'
             })
         }
