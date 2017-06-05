@@ -29,6 +29,7 @@ class FilesPlugin(PluginABC):
             parser = Parser(FILES_COMMAND)
             parser.add_command('list', bool)
             parser.add_command('show', str)
+            parser.add_command('find', str)
             parser.parse(command)
             if hasattr(parser, 'list'):
                 self.list_files(channel)
@@ -37,28 +38,31 @@ class FilesPlugin(PluginABC):
                     channel,
                     getattr(parser, 'show')
                 )
+            elif hasattr(parser, 'find'):
+                self.list_files_by_pattern(
+                    channel,
+                    pattern=getattr(
+                        parser,
+                        'find'
+                    )
+                )
             else:
                 self.slack_client.send_message(
                     channel=channel,
-                    text=f"`Known command for this plugin are`\n {parser.get_help()}",
+                    text=f"`Known command for this plugin are`\n "
+                         f"{parser.get_help()}",
                 )
 
     def list_files(self, channel):
-        fields = []
-
-        folder_metadata = dropbox_client.files_list_folder('')
-        files_names = {
-            file.name: file.size / 1024
-            for file in folder_metadata.entries
-        }
-        header = f"`[Files in you storage]`\n"
-        fields.append(header)
-        for name, size in files_names.items():
-            fields.append(f"  *{name} ({size}kb)*\n")
-
         self.slack_client.send_message(
             channel=channel,
-            text=''.join(fields)
+            text=''.join(self._get_files_list())
+        )
+
+    def list_files_by_pattern(self, channel, pattern):
+        self.slack_client.send_message(
+            channel=channel,
+            text=''.join(self._get_files_list(pattern))
         )
 
     def post_file(self, channel, file_name):
@@ -83,3 +87,23 @@ class FilesPlugin(PluginABC):
                 channel=channel,
                 text=f"`The file [{file_name}] does not exist`"
             )
+
+    def _get_files_list(self, pattern=""):
+        fields = []
+
+        folder_metadata = dropbox_client.files_list_folder('')
+        files_names = {
+            file.name: file.size / 1024
+            for file in folder_metadata.entries
+        }
+        if pattern:
+            files_names = dict(
+                (k, v) for k, v in files_names.items()
+                if pattern in k
+            )
+        header = f"`[Files in you storage]`\n"
+        fields.append(header)
+        for name, size in files_names.items():
+            fields.append(f"  *{name} ({size}kb)*\n")
+
+        return fields

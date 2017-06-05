@@ -101,4 +101,8 @@ class KeyValueCommand(Command):
             source
         )
         if parse_result and parse_result[0] and parse_result[1]:
-            setattr(self.parser, self.destination, (parse_result[0], parse_result[1]))
+            setattr(
+                self.parser,
+                self.destination,
+                (parse_result[0], parse_result[1])
+            )

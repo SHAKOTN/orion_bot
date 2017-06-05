@@ -50,7 +50,8 @@ class NotesPlugin(PluginABC):
                 self.show_stored_notes(channel)
                 self.slack_client.send_message(
                     channel=channel,
-                    text=f"`Known command for this plugin are`\n {parser.get_help()}",
+                    text=f"`Known command for this plugin are`\n "
+                         f"{parser.get_help()}",
                 )
 
     def add_note(self, note_key, note_body):
@@ -81,7 +82,8 @@ class NotesPlugin(PluginABC):
                 f"| No time!>` \n" + f"*{original_message}*"
             )
         else:
-            msg = f"*Sorry, there is no `{note_key}` note. Use one from above*"
+            msg = f"*Sorry, there is no `{note_key}` note. " \
+                  f"Use one from above*"
             self.show_stored_notes(channel)
 
         self.slack_client.send_message(
