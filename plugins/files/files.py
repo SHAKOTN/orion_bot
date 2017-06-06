@@ -1,5 +1,6 @@
 import os
 import re
+from random import choice
 
 from bot.parser import Parser
 from dropbox import Dropbox
@@ -28,11 +29,15 @@ class FilesPlugin(PluginABC):
         if command.startswith(FILES_COMMAND):
             parser = Parser(FILES_COMMAND)
             parser.add_command('list', bool)
+            parser.add_command('random', bool)
             parser.add_command('show', str)
             parser.add_command('find', str)
             parser.parse(command)
+
             if hasattr(parser, 'list'):
                 self.list_files(channel)
+            elif hasattr(parser, 'random'):
+                self.randomize(channel)
             elif hasattr(parser, 'show'):
                 self.post_file(
                     channel,
@@ -75,6 +80,15 @@ class FilesPlugin(PluginABC):
                 channel=channel,
                 text=f"`The file [{file_name}] does not exist`"
             )
+
+    def randomize(self, channel):
+        folder_metadata = dropbox_client.files_list_folder('')
+
+        files = [
+            file.name for file in folder_metadata.entries
+        ]
+        rand_file_name = choice(files)
+        self.post_file(channel, rand_file_name)
 
     def list_files(self, channel):
         self.slack_client.send_message(
