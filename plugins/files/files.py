@@ -53,18 +53,6 @@ class FilesPlugin(PluginABC):
                          f"{parser.get_help()}",
                 )
 
-    def list_files(self, channel):
-        self.slack_client.send_message(
-            channel=channel,
-            text=''.join(self._get_files_list())
-        )
-
-    def list_files_by_pattern(self, channel, pattern):
-        self.slack_client.send_message(
-            channel=channel,
-            text=''.join(self._get_files_list(pattern))
-        )
-
     def post_file(self, channel, file_name):
         try:
             __, response = dropbox_client.files_download('/' + file_name)
@@ -88,6 +76,18 @@ class FilesPlugin(PluginABC):
                 text=f"`The file [{file_name}] does not exist`"
             )
 
+    def list_files(self, channel):
+        self.slack_client.send_message(
+            channel=channel,
+            text=''.join(self._get_files_list())
+        )
+
+    def list_files_by_pattern(self, channel, pattern):
+        self.slack_client.send_message(
+            channel=channel,
+            text=''.join(self._get_files_list(pattern))
+        )
+
     def _get_files_list(self, pattern=""):
         fields = []
 
@@ -101,7 +101,7 @@ class FilesPlugin(PluginABC):
                 (k, v) for k, v in files_names.items()
                 if pattern in k
             )
-        header = f"`[Files in you storage]`\n"
+        header = "`[Files in you storage]`\n"
         fields.append(header)
         for name, size in files_names.items():
             fields.append(f"  *{name} ({size}kb)*\n")

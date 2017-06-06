@@ -30,7 +30,7 @@ class SlackGateway(SlackClient):
             initial_comment=None):
 
         data = dict()
-        data['token'] = os.environ.get('SLACK_BOT_TOKEN')
+        data['token'] = self.token
         data['file'] = filepath
         data['filename'] = filename
         data['channels'] = channels

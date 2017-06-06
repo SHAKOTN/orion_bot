@@ -98,5 +98,6 @@ class NotesPlugin(PluginABC):
     def show_stored_notes(self, channel):
         self.slack_client.send_message(
             channel=channel,
-            text=f"*Notes in storage -* `{redis_storage.get_all_notes_names()}`",
+            text=f"*Notes in storage -* "
+                 f"`{redis_storage.get_all_notes_names()}`",
         )
