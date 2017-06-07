@@ -16,3 +16,13 @@ def add_periodic(**kwargs):
         post_random_webm.s(),
         name='Post random WEBM'
     )
+    app.add_periodic_task(
+        crontab(minute=0, hour=11),
+        post_random_webm.s(),
+        name='Post random WEBM'
+    )
+    app.add_periodic_task(
+        crontab(minute=0, hour=13),
+        post_random_webm.s(),
+        name='Post random WEBM'
+    )
