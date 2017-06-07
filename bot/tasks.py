@@ -9,7 +9,7 @@ files_cls = import_string(files_cls_str)
 
 @app.task
 def hello():
-    slack_backend.load_plugins()
+    slack_backend.load_plugins(PLUGIN_CLASSES)
     files_plugins = [
         p for p in slack_backend._plugins if isinstance(p, files_cls)
     ]
