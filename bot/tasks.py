@@ -4,7 +4,6 @@ from bot.utils import import_string
 from plugins.settings import PLUGIN_CLASSES
 
 files_cls_str = PLUGIN_CLASSES['files']
-slack_backend.load_plugins(PLUGIN_CLASSES)
 
 
 @app.task
