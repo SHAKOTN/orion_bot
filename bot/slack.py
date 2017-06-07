@@ -85,5 +85,9 @@ class SlackGateway(SlackClient):
                     for plugin in self._plugins:
                         plugin.execute_command(output)
 
+    @property
+    def plugins(self):
+        return self._plugins
+
 
 slack_backend = SlackGateway(os.environ.get('SLACK_BOT_TOKEN'))

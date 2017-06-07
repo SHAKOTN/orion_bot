@@ -4,15 +4,16 @@ from bot.utils import import_string
 from plugins.settings import PLUGIN_CLASSES
 
 files_cls_str = PLUGIN_CLASSES['files']
-files_cls = import_string(files_cls_str)
+slack_backend.load_plugins(PLUGIN_CLASSES)
 
 
 @app.task
-def hello():
-    slack_backend.load_plugins(PLUGIN_CLASSES)
+def post_random_webm():
+    files_cls = import_string(files_cls_str)
     files_plugins = [
-        p for p in slack_backend._plugins if isinstance(p, files_cls)
+        p for p in slack_backend.plugins
+        if isinstance(p, files_cls)
     ]
     file_plugin = files_plugins[0]
 
-    file_plugin.randomize('bot_testing')
+    file_plugin.randomize('games')
