@@ -2,7 +2,7 @@ import os
 
 import celery
 
-app = celery.Celery('slack_bot')
+app = celery.Celery('celery')
 
 app.conf.update(broker_url=os.environ['REDIS_URL'])
 
