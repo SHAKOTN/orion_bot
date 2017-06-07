@@ -6,6 +6,7 @@ from celery.schedules import crontab
 app = celery.Celery('celery')
 
 app.conf.update(broker_url=os.environ['REDIS_URL'])
+app.conf.update(redis_max_connections=3)
 
 
 @app.on_after_configure.connect
