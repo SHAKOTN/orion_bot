@@ -13,11 +13,6 @@ app.conf.update(redis_max_connections=3)
 def add_periodic(**kwargs):
     from bot.tasks import post_random_webm
     app.add_periodic_task(
-        crontab(minute='*/50'),
-        post_random_webm.s(),
-        name='Post random webm every 50min'
-    )
-    app.add_periodic_task(
         crontab(hour=11, minute=0),
         post_random_webm.s(),
         name='Post random WEBM 11a.m'
