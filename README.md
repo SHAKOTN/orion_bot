@@ -15,7 +15,7 @@ Available plugins right now:
 
 **NOTE**: You can remove plugins from *plugins/* directory if you don't want to use them.
 
-All you need to do is to specify 5 ENV_VARIABLES:
+All you need to do is to specify these ENV_VARIABLES:
 - BOT_ID : Your slackbot ID
 - REGION : EU/US (for overwatch plugin: if you don't use it - just skip this)
 - APIXU_API_KEY: Weather service token(Apixu). This is very friendly and free to use service.
