@@ -2,7 +2,7 @@ import os
 
 import celery
 
-if os.environ.get('CELERY_ENABLED') == 1:
+if os.environ.get('CELERY_ENABLED') == '1':
 
     app = celery.Celery('celery')
 
