@@ -13,42 +13,11 @@ class TestSlackGateway(TestCase):
 
         assert slack_backend
 
-        assert len(slack_backend._plugins) == 0
-
         assert slack_backend.token == os.environ.get('SLACK_BOT_TOKEN')
-
-    def test_plugins_valid(self):
-
-        assert slack_backend
-
-        slack_backend.load_plugins({
-            'ow': "plugins.OWPlugin",
-        })
-
-        assert len(slack_backend._plugins) == 1
-
-        slack_backend.load_plugins({
-            'notes': "plugins.NotesPlugin"
-        })
-
-        assert len(slack_backend._plugins) == 2
-
-    def test_plugins_invalid(self):
-
-        assert slack_backend
-
-        with pytest.raises(ImportError):
-            slack_backend.load_plugins({
-                'ow': "plugins.FooBar",
-            })
 
     def test_references(self):
 
-        slack_backend._plugins = []
-
-        slack_backend.load_plugins(PLUGIN_CLASSES)
-
-        assert len(slack_backend._plugins) == len(PLUGIN_CLASSES.keys())
+        assert len(slack_backend.plugins) == len(PLUGIN_CLASSES.keys())
 
         plugin = slack_backend._plugins[0]
 
