@@ -14,7 +14,8 @@ if os.environ.get('CELERY_ENABLED') == '1':
     def add_periodic(**kwargs):
         from bot.tasks import post_random_webm
         app.add_periodic_task(
-            crontab(hour='7,16', minute='*/30'),
+            crontab(minute=0,
+                    hour='7,8,9,10,11,12,13,14,15,16,17,18'),
             post_random_webm.s(),
             name='Post random WEBM'
         )
