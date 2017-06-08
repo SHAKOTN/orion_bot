@@ -1,4 +1,4 @@
-<h2>This is a simple Slack Bot I made for me and my friends as we have a gaming slack chat</h2>
+<h2>This is a simple Slack Bot with plugins!</h2>
 
 This bot is ready to be deployed to Heroku (Procfile and requirements.txt are created and filled).
 If you want to use celery and write your own tasks for it add to Procfile:
