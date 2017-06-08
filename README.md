@@ -33,6 +33,42 @@ If you want to run it locally - just clone repo, specify ENV variables and make:
 python bot/core.py
 ```
 
+<h3>Writing your own task to schedule some bot jobs</h3>
+
+**NOTE** Use celery with AMQP Broker for it
+For example you want to post to your channel random file
+from you storage using `files` plugin periodically:
+```python
+# file: bot/tasks.py
+
+@app.task
+def post_random_webm():
+    files_cls = import_string(files_cls_str)
+    files_plugins = [
+        p for p in slack_backend.plugins
+        if isinstance(p, files_cls)
+    ]
+    file_plugin = files_plugins[0]
+
+    file_plugin.randomize('games')
+```
+And then you just add it to celerybeat cron jobs:
+```python
+# file bot/celery.py
+
+@app.on_after_configure.connect
+def add_periodic(**kwargs):
+    from bot.tasks import post_random_webm
+    app.add_periodic_task(
+        crontab(minute=0,
+                hour='7,8,9,10,11,12,13,14,15,16,17,18'),
+        post_random_webm.s(),
+        name='Post random WEBM'
+    )
+
+```
+
+
 <h1>Examples of plugins</h1>
 
 <h2> Overwatch Plugin</h2>
