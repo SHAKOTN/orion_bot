@@ -1,2 +1,2 @@
 orion: python bot/core.py
-worker: celery worker --app=bot.celery.app -B -l debug
+worker: celery worker --app=bot.celery.app -B -l debug --without-heartbeat
