@@ -24,7 +24,7 @@ if os.environ.get('CELERY_ENABLED') == '1':
         )
 
         app.add_periodic_task(
-            crontab(),
+            crontab(hour=6, minute=0),
             post_morning_weather.s(),
             name='Post morning weather'
         )

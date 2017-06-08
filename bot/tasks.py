@@ -31,6 +31,6 @@ def post_morning_weather():
     weather_plugin = weather_plugins[0]
     for city in cities:
         weather_plugin.send_weather_current(
-            channel='bot_testing',
+            channel='general',
             city=city
         )
