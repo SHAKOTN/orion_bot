@@ -5,3 +5,5 @@ PLUGIN_CLASSES = {
     'files': 'plugins.FilesPlugin',
     'ign': 'plugins.IGNPlugin'
 }
+
+NEWS_API_URL = 'https://newsapi.org/v1/articles'
