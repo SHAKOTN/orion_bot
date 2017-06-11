@@ -11,6 +11,7 @@ Available plugins right now:
 - Notes: Create, edit and share notes with your slackmates in channels
 - Weather: Ask bot to print the weather of the city
 - File storage(files): Store your files in dropbox
+- Some news plugins (IGN, etc)
 - SoundCloud: *coming soon*
 
 **NOTE**: You can remove plugins from *plugins/* directory if you don't want to use them.
@@ -27,6 +28,7 @@ Set to *production* if you want to use your redis to store data from plugins
 - REDIS_URL: Redis URL if you set ENV to *production*
 - CELERY_ENABLED: Set value to 1 if you want to use celery and also-
 - AMQP_URL: for celery too
+- IGN_API_KEY: if you want to use IGN news plugin
 
 If you want to run it locally - just clone repo, specify ENV variables and make:
 ```bash
