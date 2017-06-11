@@ -28,7 +28,7 @@ Set to *production* if you want to use your redis to store data from plugins
 - REDIS_URL: Redis URL if you set ENV to *production*
 - CELERY_ENABLED: Set value to 1 if you want to use celery and also-
 - AMQP_URL: for celery too
-- IGN_API_KEY: if you want to use IGN news plugin
+- NEWS_API_KEY: if you want to use news plugins (https://newsapi.org/)
 
 If you want to run it locally - just clone repo, specify ENV variables and make:
 ```bash
