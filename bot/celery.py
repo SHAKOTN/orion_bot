@@ -14,7 +14,8 @@ if os.environ.get('CELERY_ENABLED') == '1':
     def add_periodic(**kwargs):
         from bot.tasks import (
             post_random_webm,
-            post_morning_weather
+            post_morning_weather,
+            post_ign_latest_news,
         )
         app.add_periodic_task(
             crontab(minute=0,
@@ -27,4 +28,9 @@ if os.environ.get('CELERY_ENABLED') == '1':
             crontab(hour=6, minute=0),
             post_morning_weather.s(),
             name='Post morning weather'
+        )
+        app.add_periodic_task(
+            crontab(),
+            post_ign_latest_news.s(),
+            name='Post morning ign news'
         )

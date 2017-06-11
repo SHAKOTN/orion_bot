@@ -5,8 +5,10 @@ from plugins.settings import PLUGIN_CLASSES
 
 files_cls_str = PLUGIN_CLASSES['files']
 weather_cls_str = PLUGIN_CLASSES['weather']
+ign_cls_str = PLUGIN_CLASSES['ign']
 
 cities = ['kiev', 'tallinn']
+
 
 @app.task
 def post_random_webm():
@@ -34,3 +36,18 @@ def post_morning_weather():
             channel='general',
             city=city
         )
+
+
+@app.task
+def post_ign_latest_news():
+    ign_cls = import_string(ign_cls_str)
+    ign_plugins = [
+        p for p in slack_backend.plugins
+        if isinstance(p, ign_cls)
+    ]
+
+    ign_plugin = ign_plugins[0]
+
+    ign_plugin.send_latest_news(
+        'bot_testing'
+    )
