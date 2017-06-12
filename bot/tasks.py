@@ -49,6 +49,7 @@ def post_ign_latest_news():
 
     ign_plugin = ign_plugins[0]
 
+
     ign_plugin.send_latest_news(
         'ign',
         'latest',
