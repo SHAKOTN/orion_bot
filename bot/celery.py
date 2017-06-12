@@ -30,7 +30,7 @@ if os.environ.get('CELERY_ENABLED') == '1':
             name='Post morning weather'
         )
         app.add_periodic_task(
-            crontab(hour=7, minute=0),
+            crontab(minute=30, hour=8),
             post_ign_latest_news.s(),
             name='Post morning ign news'
         )
