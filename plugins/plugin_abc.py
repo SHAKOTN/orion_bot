@@ -37,22 +37,19 @@ class NewsPluginABC(PluginABC):
             message_cls,
             channel
     ):
-        try:
-            response = self._make_request(
-                source,
-                sort_by
-            )
-            msg = message_cls(
-                response["articles"]
-            )
 
-            self.slack_client.send_message(
-                channel=channel,
-                text=msg.make_me_pretty()
-            )
+        response = self._make_request(
+            source,
+            sort_by
+        )
+        msg = message_cls(
+            response["articles"]
+        )
 
-        except requests.exceptions.HTTPError as e:
-            logger.error(e)
+        self.slack_client.send_message(
+            channel=channel,
+            text=msg.make_me_pretty()
+        )
 
     def _make_request(self, source, sort_by):
         response = requests.get(
@@ -65,6 +62,8 @@ class NewsPluginABC(PluginABC):
             }
 
         )
-        response.raise_for_status()
-
-        return response.json()
+        try:
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            logger.error(e)
