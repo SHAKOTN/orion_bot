@@ -2,6 +2,7 @@ from bot.celery import app
 from bot.slack import slack_backend
 from bot.utils import import_string
 from plugins.settings import PLUGIN_CLASSES
+from plugins.news.ign.messages import IGNNewsMessage
 
 files_cls_str = PLUGIN_CLASSES['files']
 weather_cls_str = PLUGIN_CLASSES['weather']
@@ -48,6 +49,9 @@ def post_ign_latest_news():
 
     ign_plugin = ign_plugins[0]
 
-    ign_plugin.send_latest_news(
-        'bot_testing'
+    ign_plugin.send_latest0_news(
+        'ign',
+        'latest',
+        IGNNewsMessage,
+        'games'
     )
