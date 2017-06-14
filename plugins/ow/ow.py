@@ -47,9 +47,7 @@ class OWPlugin(PluginABC):
                 self.init_user(user_name, battletag)
                 self.slack_client.send_message(
                     channel=channel,
-                    text="New user with battletag `{}` is set".format(
-                        battletag
-                    ),
+                    text=f"New user with battletag `{battletag}` is set"
                 )
                 return
 
@@ -73,12 +71,16 @@ class OWPlugin(PluginABC):
         headers = {
             'User-Agent': 'SlackBot'
         }
+        url = api_url.format(
+            battletag=tag,
+            endpoint=endp
+        )
         # Without params because of OW API architecture
+        logger.info(
+            f"Request OWAPI:{url}"
+        )
         response = requests.get(
-            api_url.format(
-                battletag=tag,
-                endpoint=endp
-            ),
+            url,
             headers=headers
         )
         response.raise_for_status()
@@ -98,50 +100,6 @@ class OWPlugin(PluginABC):
                 battletag,
                 'stats'
             )
-            stats = {
-                **response[REGION]
-                ['stats']
-                ['competitive']
-                ['overall_stats'],
-                **response[REGION]
-                ['stats']
-                ['competitive']
-                ['game_stats']
-            }
-
-            curr_cache_stats = {
-                "comprank": stats["comprank"],
-                "level": str(
-                    int(stats["level"]) + int(stats["prestige"]) * 100
-                )
-            }
-
-            prev_cache_stats = redis_storage.get_user_stats(battletag)
-            if prev_cache_stats:
-                diff_message = OWDiffStatsMessage(
-                    battletag,
-                    prev_data=prev_cache_stats,
-                    curr_data=curr_cache_stats
-                )
-
-                self.slack_client.send_message(
-                    channel=channel,
-                    text=diff_message.make_me_pretty()
-                )
-
-            redis_storage.update_user(
-                battletag,
-                curr_cache_stats
-            )
-
-            ow_message = OWOverwallMessage(
-                battletag,
-                stats
-            )
-            self.slack_client.send_message(
-                channel=channel,
-                text=ow_message.make_me_pretty()
-            )
         except requests.exceptions.HTTPError:
             self.slack_client.send_message(
                 channel=channel,
@@ -150,6 +108,52 @@ class OWPlugin(PluginABC):
                     "Try *`@orion ow init your-battletag`"
                 )
             )
+            return
+
+        stats = {
+            **response[REGION]
+            ['stats']
+            ['competitive']
+            ['overall_stats'],
+            **response[REGION]
+            ['stats']
+            ['competitive']
+            ['game_stats']
+        }
+
+        curr_cache_stats = {
+            "comprank": stats["comprank"],
+            "level": str(
+                int(stats["level"]) + int(stats["prestige"]) * 100
+            )
+        }
+
+        prev_cache_stats = redis_storage.get_user_stats(battletag)
+        if prev_cache_stats:
+            diff_message = OWDiffStatsMessage(
+                battletag,
+                prev_data=prev_cache_stats,
+                curr_data=curr_cache_stats
+            )
+
+            self.slack_client.send_message(
+                channel=channel,
+                text=diff_message.make_me_pretty()
+            )
+
+        redis_storage.update_user(
+            battletag,
+            curr_cache_stats
+        )
+
+        ow_message = OWOverwallMessage(
+            battletag,
+            stats
+        )
+        self.slack_client.send_message(
+            channel=channel,
+            text=ow_message.make_me_pretty()
+        )
 
     def send_hero_stats(self, battletag, channel, hero):
         if not battletag:
@@ -159,10 +163,8 @@ class OWPlugin(PluginABC):
         if hero not in list(OW_HEROES_MAPPING.keys()):
             self.slack_client.send_message(
                 channel=channel,
-                text="`{}` - is incorrect hero name. Use one of these: `{}`".format(
-                    hero,
-                    list(OW_HEROES_MAPPING.keys())
-                )
+                text=f"`{hero}` - is incorrect hero name. "
+                     f"Use one of these: `{list(OW_HEROES_MAPPING.keys())}`"
             )
             return
         # If u played 0 hours on a hero - API returns no info about it
@@ -171,7 +173,16 @@ class OWPlugin(PluginABC):
                 battletag,
                 'heroes'
             )
+        except requests.exceptions.HTTPError:
+            self.slack_client.send_message(
+                channel=channel,
+                text=(
+                    "*Seems like your battletag is wrong*"
+                )
+            )
+            return
 
+        try:
             average_stats = (
                 response[REGION]
                 ['heroes']
@@ -188,25 +199,23 @@ class OWPlugin(PluginABC):
                 [hero]
                 ['general_stats']
             )
-
-            hero_stats = {**average_stats, **general_stats}
-
-            ow_message = OWHeroStatMessage(
-                battletag,
-                hero_stats,
-                hero
-            )
-            self.slack_client.send_message(
-                channel=channel,
-                text=ow_message.make_me_pretty()
-            )
-        except (KeyError, requests.exceptions.HTTPError):
+        except KeyError:
             self.slack_client.send_message(
                 channel=channel,
                 text=(
-                    "*Sorry, you haven't played on `{}` enough time "
-                    "or your battletag is wrong*".format(
-                        hero,
-                    )
+                    f"*Sorry, you haven't played on `{hero}` enough time*"
                 )
             )
+            return
+
+        hero_stats = {**average_stats, **general_stats}
+
+        ow_message = OWHeroStatMessage(
+            battletag,
+            hero_stats,
+            hero
+        )
+        self.slack_client.send_message(
+            channel=channel,
+            text=ow_message.make_me_pretty()
+        )
