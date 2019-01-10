@@ -1,5 +1,7 @@
 <h2>This is a simple Slack Bot with plugins!</h2>
 
+NOTE: This bot is single-threaded since I am too lazy to update the project with `ThreadPoolExecutor` for concurrent IO.
+
 This bot is ready to be deployed to Heroku (Procfile and requirements.txt are created and filled).
 If you want to use celery and write your own tasks for it add to Procfile:
 ```bash
